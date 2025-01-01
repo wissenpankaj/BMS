@@ -18,7 +18,7 @@ Clone the repository to your local machine if you haven't already:
 
 ```bash
 git clone https://github.com/wissenpankaj/BMS.git
-cd your-repository-folder/docker/InfluxDB Docker
+cd your-repository-folder/docker/InfluxDB
 ```
 
 ### 2. Prepare the Docker Environment
