@@ -19,14 +19,19 @@ import org.springframework.stereotype.Service;
 import com.influxdb.query.FluxRecord;
 import com.influxdb.query.FluxTable;
 import com.ruleengine.EVBatteryRuleEngine.dto.TelemetryData;
+import com.ruleengine.EVBatteryRuleEngine.rules.ChargingTimeRule;
+import com.ruleengine.EVBatteryRuleEngine.rules.CurrentDeviationRule;
+import com.ruleengine.EVBatteryRuleEngine.rules.CycleCountRule;
+import com.ruleengine.EVBatteryRuleEngine.rules.EnergyThroughputRule;
 import com.ruleengine.EVBatteryRuleEngine.rules.RiskClassificationRule;
 import com.ruleengine.EVBatteryRuleEngine.rules.RuleContext;
 import com.ruleengine.EVBatteryRuleEngine.rules.SOCDeviationRule;
+import com.ruleengine.EVBatteryRuleEngine.rules.SOHDeviationRule;
 import com.ruleengine.EVBatteryRuleEngine.rules.TelemetryCriticalRule;
 import com.ruleengine.EVBatteryRuleEngine.rules.TelemetryHighRiskRule;
 import com.ruleengine.EVBatteryRuleEngine.rules.TelemetryModerateRule;
 import com.ruleengine.EVBatteryRuleEngine.rules.TemperatureSpikeRule;
-import com.ruleengine.EVBatteryRuleEngine.rules.VoltageDropRule;
+import com.ruleengine.EVBatteryRuleEngine.rules.VoltageDeviationRule;
 
 @Service
 public class TeleRuleEngineService {
@@ -99,13 +104,14 @@ public class TeleRuleEngineService {
 	public TelemetryData processTelemetryData(TelemetryData telemetryData)
 			throws IllegalAccessException, InvocationTargetException {
 
-		List<FluxTable> historicTeleDataResult = queryData(telemetryData.getBatteryId()); // get Historic data based on the batteryId
+		List<FluxTable> historicTeleDataResult = queryData(telemetryData.getBatteryId()); // get Historic data based on
+																							// the batteryId
 
 		influxDBService.writeData(telemetryData);
 		influxDBService.writeFaultAlert("", "", "", "", 1);
 
 		if (historicTeleDataResult.size() == 0) { // If Historic data is not available then calculate risk for received
-											// telemetry data
+			// telemetry data
 			// Create the facts
 			Facts telemetryFact = createTelemetryFact(telemetryData);
 			// Evaluate fact
@@ -131,38 +137,46 @@ public class TeleRuleEngineService {
 
 				}
 			}
-			
-			evaluateRisk(telemetryData, historicList);
+			int endIndex = historicList.size();
+			historicList.add(endIndex, telemetryData);
+			evaluateRisk(historicList);
 		}
 		return telemetryData;
 	}
 
-	void evaluateRisk(TelemetryData currentTelemetryData, List<TelemetryData> historicTeleData) {
+	void evaluateRisk(List<TelemetryData> historicTeleData) {
 		List<TelemetryData> historicTeleDataResult = new ArrayList<>();
 		try {
 			RulesEngine rulesEngine = new DefaultRulesEngine();
-
-				for (int i = 1; i < historicTeleData.size(); i++) {
-
-					TelemetryData previousData = historicTeleData.get(i - 1);
-
-					System.out.println("TelemetryData current:        " + currentTelemetryData);
-					System.out.println("TelemetryData previous:        " + previousData);
-					
+			int lastIndex = historicTeleData.size()-1;
 					RuleContext ruleContext = new RuleContext();
-					ruleContext.setVehicleId(currentTelemetryData.getVehicleId());
-					ruleContext.setBatterId(currentTelemetryData.getBatteryId());
+					ruleContext.setVehicleId(historicTeleData.get(lastIndex).getVehicleId());
+					ruleContext.setBatterId(historicTeleData.get(lastIndex).getBatteryId());
  
-					VoltageDropRule voltageDropRule = new VoltageDropRule(currentTelemetryData, previousData, ruleContext);
-					TemperatureSpikeRule temperatureSpikeRule = new TemperatureSpikeRule(currentTelemetryData, previousData,
+										
+					ChargingTimeRule chargingTimeRule = new ChargingTimeRule(historicTeleData, ruleContext);
+					CurrentDeviationRule currentDeviationRule = new CurrentDeviationRule(historicTeleDataResult, ruleContext);
+					CycleCountRule cycleCountRule = new CycleCountRule( historicTeleDataResult,
 							ruleContext);
-					SOCDeviationRule socDeviationRule = new SOCDeviationRule(currentTelemetryData, ruleContext);
+					EnergyThroughputRule energyThroughputRule = new EnergyThroughputRule(historicTeleDataResult, ruleContext);
+					SOCDeviationRule socDeviationRule = new SOCDeviationRule(historicTeleDataResult, ruleContext);
+					SOHDeviationRule sohDeviationRule = new SOHDeviationRule(historicTeleDataResult, ruleContext);
+					TemperatureSpikeRule temperatureSpikeRule = new TemperatureSpikeRule( historicTeleDataResult,
+							ruleContext);
+					VoltageDeviationRule voltageDropRule = new VoltageDeviationRule(historicTeleData, ruleContext);
+
+					
 					RiskClassificationRule riskClassificationRule = new RiskClassificationRule(ruleContext);
 
 					Rules rules = new Rules();
-					rules.register(voltageDropRule);
-					rules.register(temperatureSpikeRule);
+					rules.register(chargingTimeRule);
+					rules.register(currentDeviationRule);
+					rules.register(cycleCountRule);
+					rules.register(energyThroughputRule);
 					rules.register(socDeviationRule);
+					rules.register(sohDeviationRule);
+					rules.register(temperatureSpikeRule);
+					rules.register(voltageDropRule);
 					rules.register(riskClassificationRule);
 
 					// Execute rules
@@ -170,10 +184,8 @@ public class TeleRuleEngineService {
 					
 					System.out.println("Risk Level:        " + ruleContext);
 					System.out.println("********************************************");
-				}
-		//	});
 
-		} catch (Exception e) {
+		}catch(Exception e){
 			e.printStackTrace();
 		}
 	}
