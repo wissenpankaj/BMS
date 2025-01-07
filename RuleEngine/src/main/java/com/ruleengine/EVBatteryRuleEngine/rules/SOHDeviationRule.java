@@ -26,7 +26,7 @@ public class SOHDeviationRule implements Rule {
     @Override
 	public boolean evaluate(Facts facts) {
     	 System.out.println("SOH : ");
-    	 return detectFault(histTelemetryData);
+    	 return detectFault(histTelemetryData);// || true;
 	}
 
 	@Override
@@ -79,7 +79,11 @@ public class SOHDeviationRule implements Rule {
         }
         
       //Out of total historic records if 30% of records are faulty then battery is faulty
-        double deviation = faultObservation / sohData.size();
-        return (deviation*100) > 30;
+        int totalHistCount = sohData.size();
+        if(totalHistCount > 0) {
+	        double deviation = faultObservation/totalHistCount;
+	        return (deviation*100) > 30;
+        }
+        return false;
     }
 }

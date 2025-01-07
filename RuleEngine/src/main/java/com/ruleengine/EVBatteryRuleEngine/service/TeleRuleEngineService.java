@@ -30,7 +30,7 @@ import com.ruleengine.EVBatteryRuleEngine.rules.SOHDeviationRule;
 import com.ruleengine.EVBatteryRuleEngine.rules.TelemetryCriticalRule;
 import com.ruleengine.EVBatteryRuleEngine.rules.TelemetryHighRiskRule;
 import com.ruleengine.EVBatteryRuleEngine.rules.TelemetryModerateRule;
-import com.ruleengine.EVBatteryRuleEngine.rules.TemperatureSpikeRule;
+import com.ruleengine.EVBatteryRuleEngine.rules.TemperatureDeviationRule;
 import com.ruleengine.EVBatteryRuleEngine.rules.VoltageDeviationRule;
 
 @Service
@@ -107,8 +107,9 @@ public class TeleRuleEngineService {
 		List<FluxTable> historicTeleDataResult = queryData(telemetryData.getBatteryId()); // get Historic data based on
 																							// the batteryId
 
-		influxDBService.writeData(telemetryData);
-		influxDBService.writeFaultAlert("", "", "", "", 1);
+	/*	Remove these 2 lines only for testing purpose
+	 * influxDBService.writeData(telemetryData);
+		influxDBService.writeFaultAlert("", "", "", "", 1);*/
 
 		if (historicTeleDataResult.size() == 0) { // If Historic data is not available then calculate risk for received
 			// telemetry data
@@ -145,6 +146,9 @@ public class TeleRuleEngineService {
 	}
 
 	void evaluateRisk(List<TelemetryData> historicTeleData) {
+		System.out.println("histData "+historicTeleData);
+		System.out.println("histData size"+historicTeleData.size());
+		
 		List<TelemetryData> historicTeleDataResult = new ArrayList<>();
 		try {
 			RulesEngine rulesEngine = new DefaultRulesEngine();
@@ -161,7 +165,7 @@ public class TeleRuleEngineService {
 					EnergyThroughputRule energyThroughputRule = new EnergyThroughputRule(historicTeleDataResult, ruleContext);
 					SOCDeviationRule socDeviationRule = new SOCDeviationRule(historicTeleDataResult, ruleContext);
 					SOHDeviationRule sohDeviationRule = new SOHDeviationRule(historicTeleDataResult, ruleContext);
-					TemperatureSpikeRule temperatureSpikeRule = new TemperatureSpikeRule( historicTeleDataResult,
+					TemperatureDeviationRule temperatureSpikeRule = new TemperatureDeviationRule( historicTeleDataResult,
 							ruleContext);
 					VoltageDeviationRule voltageDropRule = new VoltageDeviationRule(historicTeleData, ruleContext);
 

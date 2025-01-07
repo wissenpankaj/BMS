@@ -29,7 +29,7 @@ public class EnergyThroughputRule implements Rule {
     @Override
 	public boolean evaluate(Facts facts) {
     	 System.out.println("Energy Throuhput : ");
-    	 return detectFault(histTelemetryData);
+    	 return detectFault(histTelemetryData);// || true;
 	}
 
 	@Override
@@ -78,8 +78,12 @@ public class EnergyThroughputRule implements Rule {
 	        }
 	        
 	        //Out of total historic records if 30% of records are faulty then battery is faulty
-	        double deviation = faultObservation/data.size();
-	        return (deviation*100) > 30;
+	        int totalHistCount = data.size();
+	        if(totalHistCount > 0) {
+		        double deviation = faultObservation/totalHistCount;
+		        return (deviation*100) > 30;
+	        }
+	        return false;
 	    }
 	    
 	    // Method to compute moving average over a given window size

@@ -118,7 +118,7 @@ public class InfluxDBService {
                 " |> range(start: -10h)"+
                 " |> filter(fn: (r) => r[\"_measurement\"] == \"telemetry_battery_data1\")"+
                 " |> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")"+
-                " |> keep(columns: [\"_time\", \"vehicle_id\", \"battery_id\",  \"current\", \"temperature\",\"soc\",\"soh\", \"gps\", \"charging_time\", \"cycle_count\", \"current\", \"energy_throughput\"])"+
+                " |> keep(columns: [\"_time\", \"vehicle_id\", \"battery_id\",  \"current\", \"temperature\",\"soc\",\"soh\", \"gps\", \"charging_time\", \"cycle_count\", \"current\", \"energy_throughput\",\"voltage\"])"+
                 " |> rename(columns: {_time:\"time\", battery_id:\"batteryId\", vehicle_id:\"vehicleId\", charging_time:\"chargingTime\", cycle_count:\"cycleCount\", energy_throughput:\"energyThroughput\" })"+
                 " |> filter(fn: (r) =>  r.batteryId == \""+batteryId+"\"  )";
         

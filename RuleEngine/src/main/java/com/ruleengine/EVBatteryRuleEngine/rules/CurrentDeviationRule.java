@@ -29,7 +29,7 @@ public class CurrentDeviationRule implements Rule {
 	public boolean evaluate(Facts facts) {
 		System.out.println("Current : ");	
 		
-		return detectFault(histTeleData);
+		return detectFault(histTeleData);// || true;
 	}
 
 	@Override
@@ -105,8 +105,12 @@ public class CurrentDeviationRule implements Rule {
         }
         
         //Out of total historic records if 30% of records are faulty then battery is faulty
-        double deviation = faultObservation / historicalData.size();
-        return (deviation*100) > 30;
+        int totalHistCount = historicalData.size();
+        if(totalHistCount > 0) {
+	        double deviation = faultObservation/totalHistCount;
+	        return (deviation*100) > 30;
+        }
+        return false;
     }
 
     // Method to calculate the average of a list of currents (used for trend analysis)

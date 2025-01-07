@@ -31,7 +31,7 @@ public class ChargingTimeRule implements Rule {
         double threshold = average + 2 * standardDeviation;  // Example threshold (2 standard deviations above the mean)
         
         // Check for faulty battery based on historic data
-        return checkForBatteryFault(histTeleData, threshold);
+        return checkForBatteryFault(histTeleData, threshold);// || true;
 	}
 
 	@Override
@@ -91,8 +91,12 @@ public class ChargingTimeRule implements Rule {
         }
         
 		//Out of total historic records if 30% of records are faulty then battery is faulty
-        double deviation = faultObservation / histTeleData.size();
-        return (deviation*100) > 30;
+        int totalHistCount = histTeleData.size();
+        if(totalHistCount > 0) {
+	        double deviation = faultObservation/totalHistCount;
+	        return (deviation*100) > 30;
+        }
+        return false;
 
 	}
 }

@@ -24,7 +24,7 @@ public class CycleCountRule implements Rule {
 		System.out.println("Cycle count : ");
      
         // Check for faulty battery based on historic data
-        return checkForBatteryFault(histTeleData, WINDOW_SIZE);
+        return checkForBatteryFault(histTeleData, WINDOW_SIZE);// || true;
 	}
 
 	@Override
@@ -77,8 +77,12 @@ public class CycleCountRule implements Rule {
         }
         
         //Out of total historic records if 30% of records are faulty then battery is faulty
-        double deviation = faultObservation / histTelemetryData.size();
-        return (deviation*100) > 30;
+        int totalHistCount = histTelemetryData.size();
+        if(totalHistCount > 0) {
+	        double deviation = faultObservation/totalHistCount;
+	        return (deviation*100) > 30;
+        }
+        return false;
         
     }
 

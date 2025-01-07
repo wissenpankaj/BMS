@@ -3,6 +3,7 @@ package com.ruleengine.EVBatteryRuleEngine.rules;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Objects;
 
 import org.jeasy.rules.api.Facts;
 import org.jeasy.rules.api.Rule;
@@ -24,10 +25,17 @@ public class VoltageDeviationRule implements Rule {
 	@Override
 	public boolean evaluate(Facts facts) {
 		System.out.println("Voltage : ");	
-		boolean isDropping = isVoltageDropping(previousData);
-		boolean isFluctuating = isVoltageFluctuating(previousData);
-		boolean isTooLow = isVoltageTooLow(previousData);
-		return isDropping || isFluctuating || isTooLow;
+		int isDroppingFaultCount = isVoltageDropping(previousData);
+		int isFluctuatingFaultCount = isVoltageFluctuating(previousData);
+		int isTooLowFaultCount = isVoltageTooLow(previousData);
+		
+		//Out of total historic records if 30% of records are faulty then battery is faulty
+		int totalHistCount = previousData.size();
+        if(totalHistCount > 0) {
+	        double deviation = (isDroppingFaultCount + isFluctuatingFaultCount + isTooLowFaultCount)/totalHistCount;
+	        return (deviation*100) > 30;
+        }
+		return false;
 	}
 
 	@Override
@@ -61,15 +69,15 @@ public class VoltageDeviationRule implements Rule {
     private static final double MAX_VOLTAGE_FLUCTUATION = 0.2; // Max allowed fluctuation
 
     // Method to check for voltage drops
-    public static boolean isVoltageDropping(List<TelemetryData> data) {
+    public static int isVoltageDropping(List<TelemetryData> data) {
         if (data.size() < 2) {
-            return false;  // Can't detect a trend with fewer than 2 data points
+            return 0;  // Can't detect a trend with fewer than 2 data points
         }
         int faultObservation = 0;
         // Check for sudden voltage drops
         for (int i = 1; i < data.size(); i++) {
-            double prevVoltage = data.get(i - 1).getVoltage();
-            double currentVoltage = data.get(i).getVoltage();
+            double prevVoltage = Objects.isNull(data.get(i - 1).getVoltage())?0.0:data.get(i - 1).getVoltage();
+            double currentVoltage = Objects.isNull(data.get(i).getVoltage())?0.0:data.get(i).getVoltage();
 
             // If the voltage drops significantly between two consecutive readings, it's a warning
             if (prevVoltage - currentVoltage > VOLTAGE_DROP_THRESHOLD) {
@@ -78,17 +86,18 @@ public class VoltageDeviationRule implements Rule {
                 faultObservation++;
             }
         }
-        //Out of total historic records if 30% of records are faulty then battery is faulty
-        double deviation = faultObservation/ data.size();
-        return (deviation*100) > 30;
-    }
+        System.out.println("faultObservation in VoltageDropping : "+ faultObservation);
+
+ 
+        return faultObservation;    }
+    
 
     // Method to check for voltage fluctuation
-    public static boolean isVoltageFluctuating(List<TelemetryData> data) {
+    public static int isVoltageFluctuating(List<TelemetryData> data) {
     	 int faultObservation = 0;
         for (int i = 1; i < data.size(); i++) {
-            double prevVoltage = data.get(i - 1).getVoltage();
-            double currentVoltage = data.get(i).getVoltage();
+        	double prevVoltage = Objects.isNull(data.get(i - 1).getVoltage())?0.0:data.get(i - 1).getVoltage();
+            double currentVoltage = Objects.isNull(data.get(i).getVoltage())?0.0:data.get(i).getVoltage();
 
             // If fluctuation between readings exceeds the allowed threshold
             if (Math.abs(prevVoltage - currentVoltage) > MAX_VOLTAGE_FLUCTUATION) {
@@ -97,23 +106,23 @@ public class VoltageDeviationRule implements Rule {
                 faultObservation++;
             }
         }
-      //Out of total historic records if 30% of records are faulty then battery is faulty
-        double deviation = (Math.abs(data.size() - faultObservation) / data.size());
-        return (deviation*100) > 30;
-    }
+        System.out.println("faultObservation  in VoltageFluctuating : "+ faultObservation);
+
+        return faultObservation;    }
 
     // Method to check if the battery is below an acceptable voltage
-    public static boolean isVoltageTooLow(List<TelemetryData> data) {
+    public static int isVoltageTooLow(List<TelemetryData> data) {
     	int faultObservation = 0;
         for (TelemetryData telemetryData : data) {
-            if (telemetryData.getVoltage() < VOLTAGE_THRESHOLD_LOW) {
+        	double voltage = Objects.isNull(telemetryData.getVoltage())?0.0:telemetryData.getVoltage();
+
+            if (voltage < VOLTAGE_THRESHOLD_LOW) {
                 System.out.println("Battery voltage is too low at timestamp " + telemetryData.getTime());
                 faultObservation++;
             }
         }
-      //Out of total historic records if 30% of records are faulty then battery is faulty
-        double deviation = (Math.abs(data.size() - faultObservation) / data.size());
-        return (deviation*100) > 30;
+        System.out.println("faultObservation   in VoltageTooLow "+ faultObservation);
+        return faultObservation;    
     }
 
 
