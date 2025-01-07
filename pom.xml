@@ -29,6 +29,9 @@
     </properties>
     <modules>
         <module>RuleEngine</module>
+        <module>ReportingAPI</module>
+        <module>mqtt-flink/mqtt-flink</module>
+        <module>InfluxDBRepository</module>
     </modules>
 
 </project>
