@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface RuleModel {
     List<String> evaluateBatch(List<TelemetryData> batch);
+
+    String evaluateData(TelemetryData telemetryData);
 }

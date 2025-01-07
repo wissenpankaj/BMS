@@ -122,6 +122,12 @@
 			<version>1.5.31</version> <!-- Use a version compatible with your project -->
 		</dependency>
 
+		<dependency>
+			<groupId>org.apache.kafka</groupId>
+			<artifactId>kafka-clients</artifactId>
+			<version>3.0.0</version>
+		</dependency>
+
 
 		<dependency>
 			<groupId>org.apache.flink</groupId>

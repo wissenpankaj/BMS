@@ -5,15 +5,18 @@ import com.mqttflink.rule.RuleModel;
 import com.mqttflink.rule.SimpleRule;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
+import org.apache.flink.api.common.functions.FilterFunction;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.source.SourceFunction;
 import org.apache.flink.streaming.api.functions.windowing.WindowFunction;
 import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
+import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer;
 import org.apache.flink.util.Collector;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +34,12 @@ public class FlinkMqttIntegrationService {
     @Value("${mqtt.topic}")
     private String mqttTopic;
 
+    @Autowired
+    private RuleModel ruleModel;
+
+    @Autowired
+    private FlinkKafkaProducer<String> kafkaProducer;
+
     public void process() throws Exception {
         // Set up Flink execution environment
         log.info("Inside @class FlinkMqttIntegrationService @method process");
@@ -44,6 +53,18 @@ public class FlinkMqttIntegrationService {
         mqttStream
                 .map(TelemetryData::convertStringToObj)
                 .addSink(new InfluxDBSink());
+
+        // 2. Real-time telemetry data processing for faulty batteries
+        mqttStream
+                .map(TelemetryData::convertStringToObj)
+                .filter(new FaultDetectionFilter())
+                .map(data -> {
+                    String errorMessage = "Fault detected for batteryId: " + data.getBatteryId() +
+                            ", Temperature: " + data.getTemperature() +
+                            ", Voltage: " + data.getVoltage();
+                    return errorMessage;
+                })
+                .addSink(kafkaProducer);
 
         mqttStream
                 .map(TelemetryData::convertStringToObj)  // Convert String to TelemetryData
@@ -133,26 +154,14 @@ public class FlinkMqttIntegrationService {
         }
     }
 
-    //    Data sink in influx
-//    public static class InfluxDBSink extends RichSinkFunction<TelemetryData> {
-//
-//        private InfluxDBService influxDBService;
-//
-//        @Override
-//        public void open(org.apache.flink.configuration.Configuration parameters) throws Exception {
-//            super.open(parameters);
-//            // Use this method to initialize any non-serializable fields, e.g. the InfluxDBService
-//            influxDBService = new InfluxDBService(); // Re-initialize the service here
-//        }
-//
-//
-//        @Override
-//        public void invoke(TelemetryData value, Context context) {
-//            try {
-//                influxDBService.writeData(value);
-//            } catch (Exception e) {
-//                log.error("Failed to write to InfluxDB", e);
-//            }
-//        }
-//    }
+    public static class FaultDetectionFilter implements FilterFunction<TelemetryData> {
+        @Autowired
+        private RuleModel ruleModel;
+
+        @Override
+        public boolean filter(TelemetryData data) {
+            String status = ruleModel.evaluateData(data);
+            return "HIGH".equals(status);
+        }
+    }
 }
