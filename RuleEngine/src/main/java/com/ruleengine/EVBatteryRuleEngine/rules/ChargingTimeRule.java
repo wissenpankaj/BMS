@@ -6,8 +6,8 @@ import java.util.List;
 import org.jeasy.rules.api.Facts;
 import org.jeasy.rules.api.Rule;
 
-import com.ruleengine.EVBatteryRuleEngine.dto.TelemetryData;
-
+import com.wissen.bms.common.model.TelemetryData;
+import com.wissen.bms.common.model.*;
 public class ChargingTimeRule implements Rule {
 
 	private List<TelemetryData> histTeleData;

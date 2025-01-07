@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Random;
 
+import com.wissen.bms.common.model.TelemetryData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.Gson;
 import com.influxdb.query.FluxTable;
-import com.ruleengine.EVBatteryRuleEngine.dto.TelemetryData;
+import com.ruleengine.EVBatteryRuleEngine.dto.*;
 import com.ruleengine.EVBatteryRuleEngine.service.InfluxDBService;
 import com.ruleengine.EVBatteryRuleEngine.service.TeleRuleEngineService;
 
@@ -31,7 +32,7 @@ public class TeleRuleEngineController {
 	public Object evaluate() throws IllegalAccessException, InvocationTargetException {		
 		String telemetryDataStr = createTelemetryData();
 		Gson gson = new Gson();
-		TelemetryData telemetryData = gson.fromJson(telemetryDataStr, TelemetryData.class); 
+		TelemetryData telemetryData = gson.fromJson(telemetryDataStr, TelemetryData.class);
 		System.out.print("telemetryData "+telemetryData);
 		return teleRuleEngineService.processTelemetryData(telemetryData);	
 	}

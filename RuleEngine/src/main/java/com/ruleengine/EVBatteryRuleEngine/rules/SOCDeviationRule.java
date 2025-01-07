@@ -3,10 +3,9 @@ package com.ruleengine.EVBatteryRuleEngine.rules;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.wissen.bms.common.model.*;
 import org.jeasy.rules.api.Facts;
 import org.jeasy.rules.api.Rule;
-
-import com.ruleengine.EVBatteryRuleEngine.dto.TelemetryData;
 
 public class SOCDeviationRule implements Rule {
 	

@@ -4,10 +4,11 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
+import com.wissen.bms.common.model.TelemetryData;
 import org.jeasy.rules.api.Facts;
 import org.jeasy.rules.api.Rule;
 
-import com.ruleengine.EVBatteryRuleEngine.dto.TelemetryData;
+import com.ruleengine.EVBatteryRuleEngine.dto.*;
 
 public class VoltageDeviationRule implements Rule {
 

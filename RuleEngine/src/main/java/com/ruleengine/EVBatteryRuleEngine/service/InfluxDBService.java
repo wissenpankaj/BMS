@@ -1,6 +1,6 @@
 package com.ruleengine.EVBatteryRuleEngine.service;
 
-import com.ruleengine.EVBatteryRuleEngine.dto.TelemetryData;
+import com.ruleengine.EVBatteryRuleEngine.dto.*;
 import com.influxdb.client.InfluxDBClient;
 import com.influxdb.client.QueryApi;
 import com.influxdb.client.WriteApiBlocking;
@@ -8,6 +8,7 @@ import com.influxdb.client.domain.WritePrecision;
 import com.influxdb.client.write.Point;
 import com.influxdb.query.FluxRecord;
 import com.influxdb.query.FluxTable;
+import com.wissen.bms.common.model.TelemetryData;
 import org.influxdb.InfluxDB;
 import org.influxdb.dto.Query;
 import org.influxdb.dto.QueryResult;

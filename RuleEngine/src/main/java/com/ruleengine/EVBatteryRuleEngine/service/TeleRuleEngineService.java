@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import com.wissen.bms.common.model.TelemetryData;
 import org.apache.commons.beanutils.BeanUtils;
 import org.jeasy.rules.api.Facts;
 import org.jeasy.rules.api.Rule;
@@ -18,7 +19,7 @@ import org.springframework.stereotype.Service;
 
 import com.influxdb.query.FluxRecord;
 import com.influxdb.query.FluxTable;
-import com.ruleengine.EVBatteryRuleEngine.dto.TelemetryData;
+import com.ruleengine.EVBatteryRuleEngine.dto.*;
 import com.ruleengine.EVBatteryRuleEngine.rules.ChargingTimeRule;
 import com.ruleengine.EVBatteryRuleEngine.rules.CurrentDeviationRule;
 import com.ruleengine.EVBatteryRuleEngine.rules.CycleCountRule;

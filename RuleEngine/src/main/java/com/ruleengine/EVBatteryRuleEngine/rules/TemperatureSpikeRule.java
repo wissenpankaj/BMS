@@ -4,10 +4,11 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
+import com.wissen.bms.common.model.TelemetryData;
 import org.jeasy.rules.api.Facts;
 import org.jeasy.rules.api.Rule;
 
-import com.ruleengine.EVBatteryRuleEngine.dto.TelemetryData;
+import com.ruleengine.EVBatteryRuleEngine.dto.*;
 
 public class TemperatureSpikeRule implements Rule {
 
@@ -25,7 +26,7 @@ public class TemperatureSpikeRule implements Rule {
 
 	@Override
 	public boolean evaluate(Facts facts) {
-		System.out.println("Temperature : ");				
+		System.out.println("Temperature : ");
 		return isBatteryFaulty(previousData);
 	}
 
@@ -35,7 +36,7 @@ public class TemperatureSpikeRule implements Rule {
 		ruleContext.setTemperatureRisk(0.05); // Medium risk for out of bounds SOC
 		if(ruleContext.getRiskReason().equals(null) || ruleContext.getRiskReason().equals("")) {
 			ruleContext.setRiskReason(riskReason);
-		} 
+		}
 		else {
 			String prevRiskReason = ruleContext.getRiskReason();
 			ruleContext.setRiskReason(prevRiskReason+""+riskReason+" | ");
@@ -53,11 +54,11 @@ public class TemperatureSpikeRule implements Rule {
 	public int getPriority() {
 		return 7; // Higher priority
 	}
-	
+
 	// Function to detect battery fault based on historical temperature
     public static boolean isBatteryFaulty(List<TelemetryData> previousData) {
         int size = previousData.size();
-        
+
         // If we have fewer than the window size of data points, can't analyze trends effectively
         if (size < WINDOW_SIZE) {
             System.out.println("Not enough data to analyze.");
@@ -104,7 +105,7 @@ public class TemperatureSpikeRule implements Rule {
     private static boolean detectGradualRise(List<TelemetryData> recentTemperatures) {
         double initialTemp = recentTemperatures.get(0).getTemperature();
         double finalTemp = recentTemperatures.get(recentTemperatures.size() - 1).getTemperature();
-        
+
         // If temperature has gradually risen by more than 5°C in the last N readings
         if (finalTemp - initialTemp > 5) {
             System.out.println("Gradual temperature rise detected: " + (finalTemp - initialTemp) + "°C");
