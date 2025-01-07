@@ -1,7 +1,7 @@
 package com.mqttflink;
 
-import com.mqttflink.service.FlinkMqttConsumerService;
-import com.mqttflink.service.FlinkMqttConsumerService2;
+import com.mqttflink.service.FlinkMqttIntegrationService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -9,10 +9,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class MqttFlinkApplication implements CommandLineRunner {
 
-    private final FlinkMqttConsumerService flinkMqttConsumerService; // Service for Flink
+    private final FlinkMqttIntegrationService flinkMqttIntegrationService;
 
-    public MqttFlinkApplication(FlinkMqttConsumerService flinkMqttConsumerService) {
-        this.flinkMqttConsumerService = flinkMqttConsumerService;
+    @Autowired
+    public MqttFlinkApplication(FlinkMqttIntegrationService flinkMqttIntegrationService) {
+        this.flinkMqttIntegrationService = flinkMqttIntegrationService;
     }
 
     public static void main(String[] args) {
@@ -21,8 +22,6 @@ public class MqttFlinkApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-
-        // Start the Flink stream processing
-        flinkMqttConsumerService.processTelemetryData(); // Process telemetry data through Flink and Rule Engine
+        flinkMqttIntegrationService.process();
     }
 }
