@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.4.1</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+    <groupId>com.wissen</groupId>
+    <artifactId>BMS</artifactId>
+    <version>1.0.0</version>
+    <packaging>pom</packaging>
+    <name>EVBatteryManagementSystem</name>
+    <description>EVBatteryManagementSystem</description>
+
+    <properties>
+        <java.version>17</java.version>
+        <spring-boot.version>2.7.0</spring-boot.version>
+        <influxdbClientVersion>6.10.0</influxdbClientVersion>
+        <flink-connector-kafka>1.16.0</flink-connector-kafka>
+        <flink-streaming-java>1.19.0</flink-streaming-java>
+        <flink-core-version>1.19.0</flink-core-version>
+        <flink-client-version>1.19.0</flink-client-version>
+        <flink-runtime-version>1.19.0</flink-runtime-version>
+        <kafka-clients-version> 3.4.0</kafka-clients-version>
+    </properties>
+    <modules>
+        <module>RuleEngine</module>
+    </modules>
+
+</project>
