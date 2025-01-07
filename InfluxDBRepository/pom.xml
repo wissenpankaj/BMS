@@ -9,7 +9,7 @@
 		<relativePath>../pom.xml</relativePath> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.wissen.bms</groupId>
-	<artifactId>db</artifactId>
+	<artifactId>influxdbRepository</artifactId>
 	<name>influxdb</name>
 	<description>Demo project EV Battery Fault Detection</description>
 	<url/>
