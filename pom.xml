@@ -20,6 +20,12 @@
         <java.version>17</java.version>
         <spring-boot.version>2.7.0</spring-boot.version>
         <influxdbClientVersion>6.10.0</influxdbClientVersion>
+        <flink-connector-kafka>1.16.0</flink-connector-kafka>
+        <flink-streaming-java>1.19.0</flink-streaming-java>
+        <flink-core-version>1.19.0</flink-core-version>
+        <flink-client-version>1.19.0</flink-client-version>
+        <flink-runtime-version>1.19.0</flink-runtime-version>
+        <kafka-clients-version> 3.4.0</kafka-clients-version>
     </properties>
     <modules>
         <module>RuleEngine</module>

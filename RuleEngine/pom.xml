@@ -8,7 +8,7 @@
 		<version>1.0.0</version>
 		<relativePath>../pom.xml</relativePath> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.ruleengine</groupId>
+	<groupId>com.wissen.RuleEngine</groupId>
 	<artifactId>EVBatteryRuleEngine</artifactId>
 	<version>1.0.0</version>
 	<name>EVBatteryRuleEngine</name>

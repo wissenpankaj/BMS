@@ -3,12 +3,12 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.5.6</version> <!-- Compatible with Java 11 -->
-		<relativePath/> <!-- lookup parent from repository -->
+		<groupId>com.wissen</groupId>
+		<artifactId>BMS</artifactId>
+		<version>1.0.0</version>
+		<relativePath>../../pom.xml</relativePath> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.mqttflink</groupId>
+	<groupId>com.wissen.mqttflink</groupId>
 	<artifactId>mqtt-flink</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>Mqtt Flink</name>
@@ -89,31 +89,31 @@
 		<dependency>
 			<groupId>org.apache.flink</groupId>
 			<artifactId>flink-connector-kafka</artifactId>
-			<version>1.16.0</version> <!-- Use a version compatible with Flink -->
+			<version>${flink-connector-kafka}</version> <!-- Use a version compatible with Flink -->
 		</dependency>
 
 		<dependency>
 			<groupId>org.apache.flink</groupId>
 			<artifactId>flink-streaming-java</artifactId>
-			<version>1.19.0</version> <!-- Compatible Flink version -->
+			<version>${flink-streaming-java}</version> <!-- Compatible Flink version -->
 		</dependency>
 
 		<dependency>
 			<groupId>org.apache.flink</groupId>
 			<artifactId>flink-core</artifactId>
-			<version>1.19.0</version>
+			<version>${flink-core-version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.flink</groupId>
 			<artifactId>flink-clients</artifactId>
-			<version>1.19.0</version>
+			<version>${flink-client-version}</version>
 		</dependency>
 
 
 		<dependency>
 			<groupId>org.apache.flink</groupId>
 			<artifactId>flink-runtime</artifactId>
-			<version>1.19.0</version> <!-- Use your Flink version -->
+			<version>${flink-runtime-version}</version> <!-- Use your Flink version -->
 		</dependency>
 
 
