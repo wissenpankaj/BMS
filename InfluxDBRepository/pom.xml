@@ -3,12 +3,12 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.4.1</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<groupId>com.wissen</groupId>
+		<artifactId>BMS</artifactId>
+		<version>1.0.0</version>
+		<relativePath>../pom.xml</relativePath> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.ev</groupId>
+	<groupId>com.wissen.InfluxDbRepoitory</groupId>
 	<artifactId>db</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>db</name>
@@ -37,7 +37,7 @@
 		<dependency>
 			<groupId>com.influxdb</groupId>
 			<artifactId>influxdb-client-java</artifactId>
-			<version>7.2.0</version> <!-- Use the latest version if available -->
+			<version>${influxdbClientVersion}</version> <!-- Use the latest version if available -->
 		</dependency>
 
 		<dependency>
