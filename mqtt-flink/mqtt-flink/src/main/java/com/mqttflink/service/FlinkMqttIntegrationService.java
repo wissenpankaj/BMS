@@ -40,6 +40,11 @@ public class FlinkMqttIntegrationService {
         // Create a custom MQTT source
         DataStream<String> mqttStream = env.addSource(new FlinkMqttIntegrationService.MqttSource(mqttUrl, mqttTopic));
 
+        // Real-time processing for immediate data sink
+        mqttStream
+                .map(TelemetryData::convertStringToObj)
+                .addSink(new InfluxDBSink());
+
         mqttStream
                 .map(TelemetryData::convertStringToObj)  // Convert String to TelemetryData
                 .assignTimestampsAndWatermarks(
@@ -47,7 +52,7 @@ public class FlinkMqttIntegrationService {
                                 .withTimestampAssigner((event, timestamp) -> event.getTime()) // Use event timestamp for windowing
                 )
                 .keyBy(TelemetryData::getBatteryId) // Group data by Battery ID
-                .timeWindow(Time.seconds(30)) // Create a 10-second tumbling window
+                .timeWindow(Time.seconds(10)) // Create a 10-second tumbling window
                 .apply(new BatchProcessor()) // Process data within each 10-second window
                 .print();
 
@@ -127,4 +132,27 @@ public class FlinkMqttIntegrationService {
             out.collect("Batch processed successfully for key: " + key);
         }
     }
+
+    //    Data sink in influx
+//    public static class InfluxDBSink extends RichSinkFunction<TelemetryData> {
+//
+//        private InfluxDBService influxDBService;
+//
+//        @Override
+//        public void open(org.apache.flink.configuration.Configuration parameters) throws Exception {
+//            super.open(parameters);
+//            // Use this method to initialize any non-serializable fields, e.g. the InfluxDBService
+//            influxDBService = new InfluxDBService(); // Re-initialize the service here
+//        }
+//
+//
+//        @Override
+//        public void invoke(TelemetryData value, Context context) {
+//            try {
+//                influxDBService.writeData(value);
+//            } catch (Exception e) {
+//                log.error("Failed to write to InfluxDB", e);
+//            }
+//        }
+//    }
 }
