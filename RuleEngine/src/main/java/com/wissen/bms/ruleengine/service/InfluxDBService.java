@@ -1,19 +1,14 @@
 package com.wissen.bms.ruleengine.service;
 
-import com.ruleengine.EVBatteryRuleEngine.dto.*;
 import com.influxdb.client.InfluxDBClient;
 import com.influxdb.client.QueryApi;
 import com.influxdb.client.WriteApiBlocking;
 import com.influxdb.client.domain.WritePrecision;
 import com.influxdb.client.write.Point;
-import com.influxdb.query.FluxRecord;
 import com.influxdb.query.FluxTable;
 import com.wissen.bms.common.model.TelemetryData;
 import org.influxdb.InfluxDB;
-import org.influxdb.dto.Query;
-import org.influxdb.dto.QueryResult;
 
-import org.influxdb.dto.QueryResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

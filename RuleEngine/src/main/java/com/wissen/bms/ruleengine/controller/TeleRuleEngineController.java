@@ -1,6 +1,8 @@
 package com.wissen.bms.ruleengine.controller;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import com.wissen.bms.common.model.TelemetryData;
@@ -11,8 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.Gson;
-import com.ruleengine.EVBatteryRuleEngine.dto.*;
-import com.wissen.bms.ruleengine.service.InfluxDBService;
 import com.wissen.bms.ruleengine.service.TeleRuleEngineService;
 
 @RequestMapping("ruleEngine")
@@ -21,36 +21,26 @@ public class TeleRuleEngineController {
 		
 	@Autowired
 	TeleRuleEngineService teleRuleEngineService;
-	
-	@Autowired
-	InfluxDBService influxDBService;
-	
+
 	@GetMapping("/processData")
 	@ResponseBody
-	public Object evaluate() throws IllegalAccessException, InvocationTargetException {		
-		String telemetryDataStr = createTelemetryData();
+	public Object evaluate() throws IllegalAccessException, InvocationTargetException {
+		// Create multiple telemetry data samples
+		List<TelemetryData> telemetryDataList = new ArrayList<>();
 		Gson gson = new Gson();
-		TelemetryData telemetryData = gson.fromJson(telemetryDataStr, TelemetryData.class);
-		System.out.print("telemetryData "+telemetryData);
-		return teleRuleEngineService.processTelemetryData(telemetryData);	
+
+		// Simulate generating and adding telemetry data to the list
+		for (int i = 0; i < 5; i++) { // For example, generating 5 telemetry data samples
+			String telemetryDataStr = createTelemetryData();
+			TelemetryData telemetryData = gson.fromJson(telemetryDataStr, TelemetryData.class);
+			telemetryDataList.add(telemetryData);
+		}
+
+		System.out.println("Telemetry Data List: " + telemetryDataList);
+		return teleRuleEngineService.processTelemetryData(telemetryDataList);
 	}
 
-	
-	@GetMapping("/influxData")
-	@ResponseBody
-	public Object processInfluxData() {		
-		String telemetryDataStr = createTelemetryData();
-		Gson gson = new Gson();
-		TelemetryData telemetryData = gson.fromJson(telemetryDataStr, TelemetryData.class); 		
 
-	    influxDBService.writeData(telemetryData);	
-	    
-	    Object result = teleRuleEngineService.queryData("B8");
-	    
-	    System.out.print(result);
-	    return result;
-	}
-	
 	String createTelemetryData() {
 			Random random = new Random();
 			String vehicleId = "EV" + random.nextInt(10); // Simulate 10 different EVs
