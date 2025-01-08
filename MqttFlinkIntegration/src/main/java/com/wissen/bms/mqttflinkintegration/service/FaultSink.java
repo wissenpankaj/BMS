@@ -1,4 +1,4 @@
-package com.wissen.bms.mqttflink.service;
+package com.wissen.bms.mqttflinkintegration.service;
 
 import com.ruleengine.EVBatteryRuleEngine.rules.RuleContext;
 import org.apache.flink.streaming.api.functions.sink.SinkFunction;

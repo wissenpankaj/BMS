@@ -1,10 +1,10 @@
-package com.wissen.bms.mqttflink.service;
+package com.wissen.bms.mqttflinkintegration.service;
 
 import com.influxdb.client.InfluxDBClient;
 import com.influxdb.client.WriteApiBlocking;
 import com.influxdb.client.domain.WritePrecision;
 import com.influxdb.client.write.Point;
-import com.wissen.bms.mqttflink.model.TelemetryData;
+import com.wissen.bms.mqttflinkintegration.model.TelemetryData;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.Instant;

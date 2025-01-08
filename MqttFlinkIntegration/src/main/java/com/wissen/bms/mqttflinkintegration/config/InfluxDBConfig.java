@@ -1,4 +1,4 @@
-package com.wissen.bms.mqttflink.config;
+package com.wissen.bms.mqttflinkintegration.config;
 
 import com.influxdb.client.InfluxDBClient;
 import com.influxdb.client.InfluxDBClientFactory;

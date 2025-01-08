@@ -6,12 +6,12 @@
 		<groupId>com.wissen</groupId>
 		<artifactId>BMS</artifactId>
 		<version>1.0.0</version>
-		<relativePath>../../pom.xml</relativePath> <!-- lookup parent from repository -->
+		<relativePath>../pom.xml</relativePath> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.wissen.bms</groupId>
-	<artifactId>mqtt-flink</artifactId>
-	<name>Mqtt Flink</name>
-	<description>Mqtt Flink project for Spring Boot</description>
+	<artifactId>mqtt-flink-intgration</artifactId>
+	<name>Mqtt Flink Integration</name>
+	<description>Mqtt Flink Integration and stream Processing</description>
 	<url/>
 	<licenses>
 		<license/>
@@ -77,10 +77,7 @@
 			<version>6.4.1</version>
 		</dependency>
 
-
-
 		<!--		Flink dependencies-->
-
 		<!-- https://mavenlibs.com/maven/dependency/com.github.davidfantasy/flink-connector-mqtt -->
 		<dependency>
 			<groupId>org.apache.flink</groupId>

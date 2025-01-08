@@ -1,8 +1,8 @@
-package com.wissen.bms.mqttflink.service;
+package com.wissen.bms.mqttflinkintegration.service;
 
 import com.ruleengine.EVBatteryRuleEngine.rules.RuleContext;
 import com.ruleengine.EVBatteryRuleEngine.service.TeleRuleEngineService;
-import com.wissen.bms.mqttflink.model.TelemetryData;
+import com.wissen.bms.mqttflinkintegration.model.TelemetryData;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.api.common.state.ValueState;
@@ -14,16 +14,13 @@ import org.apache.flink.streaming.api.functions.source.SourceFunction;
 import org.apache.flink.streaming.api.functions.windowing.WindowFunction;
 import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
-import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer;
 import org.apache.flink.util.Collector;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -33,8 +30,8 @@ import java.util.stream.Collectors;
 @Slf4j
 public class FlinkMqttIntegrationService {
 
-    @Autowired
-    TeleRuleEngineService teleRuleEngineService;
+//    @Autowired
+//    TeleRuleEngineService teleRuleEngineService;
 
 
     @Value("${mqtt.broker.url}")

@@ -1,4 +1,4 @@
-package com.wissen.bms.mqttflink.config;
+package com.wissen.bms.mqttflinkintegration.config;
 
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer;
 import org.apache.flink.api.common.serialization.SimpleStringSchema;

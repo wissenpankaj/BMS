@@ -1,12 +1,11 @@
-package com.wissen.bms.mqttflink.rule;
+package com.wissen.bms.mqttflinkintegration.rule;
 
-import com.mqttflink.model.TelemetryData;
 
-import java.util.ArrayList;
+import com.wissen.bms.mqttflinkintegration.model.TelemetryData;
+
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class SimpleRule implements RuleModel{
     private Predicate<TelemetryData> condition;
