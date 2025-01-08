@@ -67,13 +67,7 @@ public class FlinkMqttIntegrationService {
 //                    String status = ruleModel.evaluateData(data); // Return true if fault is detected, false otherwise
 //                    return "HIGH".equals(status);
 //                })
-//                .map(data -> {
-//                    String errorMessage = "Fault detected for batteryId: " + data.getBatteryId() +
-//                            ", Temperature: " + data.getTemperature() +
-//                            ", Voltage: " + data.getVoltage();
-//                    return errorMessage; // Return error message for Kafka
-//                })
-//                .addSink(kafkaProducer);
+
 
         DataStream<RuleContext> realTimeFaults = telemetryStream
                 .map(TelemetryData::convertStringToObj)
