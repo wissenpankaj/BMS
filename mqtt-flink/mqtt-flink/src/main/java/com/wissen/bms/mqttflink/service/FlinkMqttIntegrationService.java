@@ -1,8 +1,8 @@
-package com.wissen.bms.mqttflink.service;
+package com.mqttflink.service;
 
-import com.wissen.bms.mqttflink.model.TelemetryData;
-import com.wissen.bms.mqttflink.rule.RuleModel;
-import com.wissen.bms.mqttflink.rule.SimpleRule;
+import com.mqttflink.model.TelemetryData;
+import com.mqttflink.rule.RuleModel;
+import com.mqttflink.rule.SimpleRule;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.streaming.api.datastream.DataStream;
