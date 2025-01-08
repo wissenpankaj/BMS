@@ -14,9 +14,11 @@ import org.apache.flink.streaming.api.functions.source.SourceFunction;
 import org.apache.flink.streaming.api.functions.windowing.WindowFunction;
 import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
+import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer;
 import org.apache.flink.util.Collector;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -40,13 +42,13 @@ public class FlinkMqttIntegrationService {
     @Value("${mqtt.topic}")
     private String mqttTopic;
 
-//    @Autowired
-//    private FlinkKafkaProducer<String> kafkaProducer;
+    @Autowired
+   private FlinkKafkaProducer<String> kafkaProducer;
 
     public void process() throws Exception {
 
         // Set up Flink execution environment
-        log.info("Inside @class FlinkMqttIntegrationService @method process");
+        log.info("changes Inside @class FlinkMqttIntegrationService @method process");
 
         final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
@@ -54,9 +56,9 @@ public class FlinkMqttIntegrationService {
         DataStream<String> telemetryStream = env.addSource(new FlinkMqttIntegrationService.MqttSource(mqttUrl, mqttTopic));
 
         // Real-time processing for immediate data sink
-        telemetryStream
-                .map(TelemetryData::convertStringToObj)
-                .addSink(new InfluxDBSink());
+//        telemetryStream
+//                .map(TelemetryData::convertStringToObj)
+//                .addSink(new InfluxDBSink());
 
 //        telemetryStream
 //                .map(TelemetryData::convertStringToObj)
@@ -81,16 +83,25 @@ public class FlinkMqttIntegrationService {
         DataStream<RuleContext> trendFaults = telemetryStream
                 .map(TelemetryData::convertStringToObj)  // Convert String to TelemetryData
                 .assignTimestampsAndWatermarks(
-                        WatermarkStrategy.<TelemetryData>forBoundedOutOfOrderness(Duration.ofSeconds(5)) // Handle late data with 5 second delay
+                        WatermarkStrategy.<TelemetryData>forBoundedOutOfOrderness(Duration.ofSeconds(2)) // Handle late data with 5 second delay
                                 .withTimestampAssigner((event, timestamp) -> event.getTime()) // Use event timestamp for windowing
                 )
                 .keyBy(TelemetryData::getBatteryId) // Group data by Battery ID
-                .timeWindow(Time.seconds(10)) // Create a 10-second tumbling window
+                .timeWindow(Time.seconds(5)) // Create a 10-second tumbling window
                 .apply(new BatchProcessor()); // Process data within each 10-second window
 
-        DataStream<RuleContext> combinedFaults = realTimeFaults.union(trendFaults);
+        DataStream<String> realTimeFaults1 = telemetryStream
+                .map(TelemetryData::convertStringToObj)
+                .keyBy(TelemetryData::getBatteryId)
+                .process(new CriticalThresholdProcessFunction1());
+        realTimeFaults.addSink(new FaultSink(kafkaProducer));
 
-        combinedFaults.addSink(new FaultSink());
+//        DataStream<RuleContext> combinedFaults = realTimeFaults.union(trendFaults);
+
+//        combinedFaults.addSink(new FaultSink());
+
+//        realTimeFaults1.addSink(kafkaProducer); done
+//        realTimeFaults1.addSink(new FaultSink());
         log.info("Inside @class FlinkMqttIntegrationService @method process on execute");
         // Execute the Flink job
         env.execute("MQTT to Flink Integration");
@@ -155,7 +166,10 @@ public class FlinkMqttIntegrationService {
 
 //            ruleEngineService.evaluateRisk(batch);
 
-            out.collect(new RuleContext());
+            log.info("going to batch collect FaultSink @method invoke");
+            RuleContext ruleContext = new RuleContext();
+            ruleContext.setRiskLevel("High");
+            out.collect(ruleContext);
         }
     }
     public static class CriticalThresholdProcessFunction extends org.apache.flink.streaming.api.functions.KeyedProcessFunction<String, TelemetryData, RuleContext> {
@@ -201,6 +215,7 @@ public class FlinkMqttIntegrationService {
             TelemetryData lastTelemetry = lastTelemetryState.value();
 
 //            RuleContext ruleContext = ruleEngineService.processTelemetryData(telemetryData, lastTelemetry);
+            log.info("going to collect FaultSink @method invoke");
             out.collect(ruleContext);
 
            /* if (lastTelemetry != null) {
@@ -267,4 +282,53 @@ public class FlinkMqttIntegrationService {
             return telemetryData.stream().filter(data->data.getBatteryId().equals(batteryId)).collect(Collectors.toList());
         }
     }
+
+
+
+
+    public static class CriticalThresholdProcessFunction1 extends org.apache.flink.streaming.api.functions.KeyedProcessFunction<String, TelemetryData, String> {
+        private ValueState<TelemetryData> lastTelemetryState;
+
+        @Override
+        public void open(org.apache.flink.configuration.Configuration parameters) throws Exception {
+            ValueStateDescriptor<TelemetryData> descriptor = new ValueStateDescriptor<>(
+                    "lastTelemetryState",
+                    TelemetryData.class
+            );
+            lastTelemetryState = getRuntimeContext().getState(descriptor);
+        }
+
+        @Override
+        public void processElement(TelemetryData telemetryData, KeyedProcessFunction<String, TelemetryData, String>.Context context, Collector<String> out) throws Exception {
+
+            TeleRuleEngineService ruleEngineService = new TeleRuleEngineService();
+//            ruleEngineService.processTelemetryData(telemetryData);
+
+            RuleContext ruleContext = new RuleContext();
+            ruleContext.setRiskLevel("High");
+            out.collect("ruleContext");
+
+            TelemetryData lastTelemetry = lastTelemetryState.value();
+
+//            RuleContext ruleContext = ruleEngineService.processTelemetryData(telemetryData, lastTelemetry);
+            log.info("going to collect FaultSink @method invoke");
+//            out.collect("ruleContext");
+
+           /* if (lastTelemetry != null) {
+                double voltageDelta = Math.abs(telemetry.getVoltage() - lastTelemetry.getVoltage());
+                double temperatureDelta = Math.abs(telemetry.getTemperature() - lastTelemetry.getTemperature());
+                double dischargeRateDelta = Math.abs(telemetry.getDischargeRate() - lastTelemetry.getDischargeRate());
+
+                if (voltageDelta > 0.2 || temperatureDelta > 10 || dischargeRateDelta > 0.5) {
+                    out.collect(new FaultEvent(telemetry.getBatteryId(), "Sudden Change Detected"));
+                }
+            }*/
+
+            // Update state
+            lastTelemetryState.update(telemetryData);
+        }
+    }
+
 }
+
+
