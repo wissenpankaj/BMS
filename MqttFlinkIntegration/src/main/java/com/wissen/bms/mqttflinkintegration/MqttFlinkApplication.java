@@ -1,6 +1,6 @@
-package com.wissen.bms.mqttflink;
+package com.wissen.bms.mqttflinkintegration;
 
-import com.wissen.bms.mqttflink.service.FlinkMqttIntegrationService;
+import com.wissen.bms.mqttflinkintegration.service.FlinkMqttIntegrationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;

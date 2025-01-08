@@ -1,6 +1,7 @@
-package com.wissen.bms.mqttflink.rule;
+package com.wissen.bms.mqttflinkintegration.rule;
 
-import com.wissen.bms.mqttflink.model.TelemetryData;
+
+import com.wissen.bms.mqttflinkintegration.model.TelemetryData;
 
 import java.util.List;
 import java.util.function.Predicate;

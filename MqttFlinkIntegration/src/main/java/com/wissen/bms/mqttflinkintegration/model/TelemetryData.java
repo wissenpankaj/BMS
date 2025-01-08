@@ -1,4 +1,4 @@
-package com.wissen.bms.mqttflink.model;
+package com.wissen.bms.mqttflinkintegration.model;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
