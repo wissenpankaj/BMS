@@ -8,7 +8,7 @@
 		<version>1.0.0</version>
 		<relativePath>../../pom.xml</relativePath> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.wissen.mqttflink</groupId>
+	<groupId>com.wissen.bms</groupId>
 	<artifactId>mqtt-flink</artifactId>
 	<name>Mqtt Flink</name>
 	<description>Mqtt Flink project for Spring Boot</description>
