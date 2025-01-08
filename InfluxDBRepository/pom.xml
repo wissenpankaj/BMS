@@ -8,10 +8,9 @@
 		<version>1.0.0</version>
 		<relativePath>../pom.xml</relativePath> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.wissen.InfluxDbRepoitory</groupId>
-	<artifactId>db</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<name>db</name>
+	<groupId>com.wissen.bms</groupId>
+	<artifactId>influxdbRepository</artifactId>
+	<name>influxdb</name>
 	<description>Demo project EV Battery Fault Detection</description>
 	<url/>
 	<licenses>

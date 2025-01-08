@@ -32,6 +32,7 @@
         <module>ReportingAPI</module>
         <module>mqtt-flink/mqtt-flink</module>
         <module>InfluxDBRepository</module>
+        <module>Common</module>
     </modules>
 
 </project>

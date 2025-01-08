@@ -8,9 +8,8 @@
 		<version>1.0.0</version>
 		<relativePath>../pom.xml</relativePath> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.wissen.reportingAPI</groupId>
+	<groupId>com.wissen.bms</groupId>
 	<artifactId>reportingAPI</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
 	<name>reportingAPI</name>
 	<description>Faulty Battery Reporting API</description>
 	<url/>
@@ -51,6 +50,11 @@
     		<groupId>com.influxdb</groupId>
     		<artifactId>influxdb-client-java</artifactId>
     		<version>${influxdbClientVersion}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.wissen.bms</groupId>
+			<artifactId>Common</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
 
