@@ -128,8 +128,9 @@
 		<dependency>
 			<groupId>com.wissen.RuleEngine</groupId>
 			<artifactId>EVBatteryRuleEngine</artifactId>
-			<version>1.0.0</version>
+			<version>${project.version}</version>
 		</dependency>
+
 
 	</dependencies>
 
