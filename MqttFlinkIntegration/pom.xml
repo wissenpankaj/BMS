@@ -129,9 +129,9 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.wissen.RuleEngine</groupId>
+			<groupId>com.wissen.bms</groupId>
 			<artifactId>EVBatteryRuleEngine</artifactId>
-			<version>${project.version}</version>
+			<version>1.0.0</version>
 		</dependency>
 
 

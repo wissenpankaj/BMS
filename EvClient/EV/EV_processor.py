@@ -7,9 +7,9 @@ import paho.mqtt.client as mqtt
 
 
 # MQTT Configuration
-MQTT_BROKER = "your.mqtt.broker"
+MQTT_BROKER = "localhost"
 MQTT_PORT = 1883
-MQTT_TOPIC = "ev/battery/telemetry"
+MQTT_TOPIC = "ev/fleet/battery/telemetry"
 
 # Thresholds for risk levels
 RISK_THRESHOLDS = {
