@@ -128,11 +128,11 @@
 			<version>${flink-runtime-version}</version> <!-- Use your Flink version -->
 		</dependency>
 
-		<dependency>
-			<groupId>com.wissen.RuleEngine</groupId>
-			<artifactId>EVBatteryRuleEngine</artifactId>
-			<version>${project.version}</version>
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>com.wissen</groupId>-->
+<!--			<artifactId>EVBatteryRuleEngine</artifactId>-->
+<!--			<version>${project.version}</version>-->
+<!--		</dependency>-->
 
 
 	</dependencies>
