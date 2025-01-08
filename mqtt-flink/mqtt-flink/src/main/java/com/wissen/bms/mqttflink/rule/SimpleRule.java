@@ -1,14 +1,13 @@
 package com.wissen.bms.mqttflink.rule;
 
-import com.wissen.bms.mqttflink.model.TelemetryData;
-import org.springframework.stereotype.Component;
+import com.mqttflink.model.TelemetryData;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-@Component
 public class SimpleRule implements RuleModel{
     private Predicate<TelemetryData> condition;
     private String action;
@@ -36,11 +35,4 @@ public class SimpleRule implements RuleModel{
         System.out.println("inside Rule" + batch.size());
         return batch.stream().map(TelemetryData::getBatteryId).collect(Collectors.toList());
     }
-
-    @Override
-    public String evaluateData(TelemetryData telemetryData) {
-        int value = new Random().nextInt(10);
-        return value%2==0 ? "HIGH" : "LOW";
-    }
-
 }

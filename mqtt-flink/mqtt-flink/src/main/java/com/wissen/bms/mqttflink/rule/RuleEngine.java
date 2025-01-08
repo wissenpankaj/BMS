@@ -1,7 +1,5 @@
 package com.wissen.bms.mqttflink.rule;
 
-import com.wissen.bms.mqttflink.model.TelemetryData;
-
 import java.util.ArrayList;
 import java.util.List;
 
