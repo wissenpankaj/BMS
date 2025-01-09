@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.wissen</groupId>
+		<artifactId>BMS</artifactId>
+		<version>1.0.0</version>
+		<relativePath>../../pom.xml</relativePath> <!-- lookup parent from repository -->
+	</parent>
+	<groupId>com.wissen.kafkaflink</groupId>
+	<artifactId>kafka-flink-integration</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>Kafka Flink Integration</name>
+	<description>Kafka Flink Integration project for Spring Boot</description>
+	<url/>
+	<licenses>
+		<license/>
+	</licenses>
+	<developers>
+		<developer/>
+	</developers>
+	<scm>
+		<connection/>
+		<developerConnection/>
+		<tag/>
+		<url/>
+	</scm>
+	<properties>
+		<java.version>11</java.version> <!-- Set Java 11 -->
+		<maven.compiler.source>11</maven.compiler.source> <!-- Ensures Java 11 -->
+		<maven.compiler.target>11</maven.compiler.target> <!-- Ensures Java 11 -->
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.flink</groupId>
+			<artifactId>flink-connector-kafka</artifactId>
+			<version>${flink-connector-kafka}</version> <!-- Use a version compatible with Flink -->
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.flink</groupId>
+			<artifactId>flink-streaming-java</artifactId>
+			<version>${flink-streaming-java}</version> <!-- Compatible Flink version -->
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.kafka</groupId>
+			<artifactId>kafka-clients</artifactId>
+			<version>${kafka-clients-version}</version> <!-- Compatible Kafka client version -->
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.10.1</version>
+				<configuration>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.0.0-M5</version>
+				<configuration>
+					<skipTests>false</skipTests>
+					<includes>
+						<include>**/*Test.java</include>
+					</includes>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>
+
+
+
+
+		<!--<?xml version="1.0" encoding="UTF-8"?>-->
+<!--<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"-->
+<!--	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">-->
+<!--	<modelVersion>4.0.0</modelVersion>-->
+<!--	<parent>-->
+<!--		<groupId>org.springframework.boot</groupId>-->
+<!--		<artifactId>spring-boot-starter-parent</artifactId>-->
+<!--		<version>2.1.0</version>-->
+<!--		<relativePath/> &lt;!&ndash; lookup parent from repository &ndash;&gt;-->
+<!--	</parent>-->
+<!--	<groupId>com.kafkaflink</groupId>-->
+<!--	<artifactId>kafka-flink-integration</artifactId>-->
+<!--	<version>0.0.1-SNAPSHOT</version>-->
+<!--	<name>Kafka Flink Integration</name>-->
+<!--	<description>Kafka Flink Integration project for Spring Boot</description>-->
+<!--	<url/>-->
+<!--	<licenses>-->
+<!--		<license/>-->
+<!--	</licenses>-->
+<!--	<developers>-->
+<!--		<developer/>-->
+<!--	</developers>-->
+<!--	<scm>-->
+<!--		<connection/>-->
+<!--		<developerConnection/>-->
+<!--		<tag/>-->
+<!--		<url/>-->
+<!--	</scm>-->
+<!--	<properties>-->
+<!--		<java.version>11</java.version>-->
+<!--	</properties>-->
+<!--	<dependencies>-->
+<!--		<dependency>-->
+<!--			<groupId>org.springframework.boot</groupId>-->
+<!--			<artifactId>spring-boot-starter</artifactId>-->
+<!--		</dependency>-->
+
+<!--		<dependency>-->
+<!--			<groupId>org.apache.flink</groupId>-->
+<!--			<artifactId>flink-connector-kafka</artifactId>-->
+<!--			<version>1.16.0</version> &lt;!&ndash; Use the version compatible with your Flink version &ndash;&gt;-->
+<!--		</dependency>-->
+
+<!--		<dependency>-->
+<!--			<groupId>org.springframework.boot</groupId>-->
+<!--			<artifactId>spring-boot-starter-test</artifactId>-->
+<!--			<scope>test</scope>-->
+<!--		</dependency>-->
+
+<!--&lt;!&ndash;		flink depedency&ndash;&gt;-->
+
+<!--			&lt;!&ndash; Flink dependencies &ndash;&gt;-->
+<!--		<dependency>-->
+<!--			<groupId>org.apache.flink</groupId>-->
+<!--			<artifactId>flink-streaming-java</artifactId>-->
+<!--			<version>1.19.0</version>-->
+<!--		</dependency>-->
+
+
+<!--		&lt;!&ndash; https://mvnrepository.com/artifact/org.apache.kafka/kafka-clients &ndash;&gt;-->
+<!--		<dependency>-->
+<!--			<groupId>org.apache.kafka</groupId>-->
+<!--			<artifactId>kafka-clients</artifactId>-->
+<!--			<version>3.4.0</version> &lt;!&ndash; You can use the latest version of Kafka client &ndash;&gt;-->
+<!--		</dependency>-->
+
+
+
+<!--		&lt;!&ndash; https://mvnrepository.com/artifact/org.apache.flink/flink-connector-kafka &ndash;&gt;-->
+<!--		<dependency>-->
+<!--			<groupId>org.apache.flink</groupId>-->
+<!--			<artifactId>flink-connector-kafka</artifactId>-->
+<!--			<version>1.17.1</version>-->
+<!--		</dependency>-->
+
+<!--	</dependencies>-->
+
+
+<!--	<build>-->
+<!--		<plugins>-->
+<!--			<plugin>-->
+<!--				<groupId>org.springframework.boot</groupId>-->
+<!--				<artifactId>spring-boot-maven-plugin</artifactId>-->
+<!--			</plugin>-->
+<!--			<plugin>-->
+<!--				<groupId>org.apache.maven.plugins</groupId>-->
+<!--				<artifactId>maven-surefire-plugin</artifactId>-->
+<!--				<version>3.0.0-M5</version> &lt;!&ndash; Example version &ndash;&gt;-->
+<!--				<configuration>-->
+<!--					<skipTests>false</skipTests>-->
+<!--					<includes>-->
+<!--						<include>**/*Test.java</include> &lt;!&ndash; Or specific test class patterns &ndash;&gt;-->
+<!--					</includes>-->
+<!--				</configuration>-->
+<!--			</plugin>-->
+<!--		</plugins>-->
+<!--	</build>-->
+
+<!--</project>-->
