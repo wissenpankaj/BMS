@@ -1,6 +1,6 @@
 package com.wissen.bms.ruleengine.service;
 
-import com.ruleengine.EVBatteryRuleEngine.dto.*;
+
 import com.influxdb.client.InfluxDBClient;
 import com.influxdb.client.QueryApi;
 import com.influxdb.client.WriteApiBlocking;

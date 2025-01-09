@@ -25,8 +25,8 @@ BATTERY_DATA_TOPIC = "ev/battery/telemetry"
 # Paths to certificates and keys
 # CA_PATH = ".\AmazonRootCA1.pem"
 CA_PATH = ""
-CERT_PATH = ".\ev.cert.pem"
-KEY_PATH = ".\ev.private.key"
+CERT_PATH = ".\\ev.cert.pem"
+KEY_PATH = ".\\ev.private.key"
 CLIENT_ID="ev"
 
 received_count = 0
