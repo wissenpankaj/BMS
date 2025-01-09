@@ -26,8 +26,9 @@ public class TelemetryData {
     private double chargingTime; // Charging time (in minutes)
 
     private int cycleCount; // Charge cycles
-
-    private String gps; // GPS coordinates
+    private String gps;
+//    private double latitude; // GPS coordinates
+//    private double longitude; // GPS coordinates
 
     private String time;
 
