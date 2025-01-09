@@ -14,7 +14,7 @@ public class FaultLogModel {
     private Integer faultid;
 
     @Column(nullable = false)
-    private Timestamp createdate = new Timestamp(System.currentTimeMillis());
+    private Timestamp createdat = new Timestamp(System.currentTimeMillis());
 
     private Integer createdby;
 

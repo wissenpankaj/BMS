@@ -41,7 +41,7 @@ public class FaultLogController {
 
     @GetMapping("/date")
     public ResponseEntity<List<FaultLogModel>> getFaultLogsByCreateDate(@Valid @RequestParam String createDate) {
-        List<FaultLogModel> faultLogs = faultLogService.getFaultLogsByCreateDate(createDate);
+        List<FaultLogModel> faultLogs = faultLogService.getFaultLogsByCreatedAt(createDate);
         return ResponseEntity.ok(faultLogs);
     }
 

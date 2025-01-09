@@ -35,12 +35,12 @@ public class FaultLogServiceImpl implements FaultLogService {
         return faultLogRepo.findByBatteryid(batteryId);
     }
     @Override
-    public List<FaultLogModel> getFaultLogsByCreateDate(String createDate) {
+    public List<FaultLogModel> getFaultLogsByCreatedAt(String createDate) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate date = LocalDate.parse(createDate, formatter);
         LocalDateTime startOfDay = date.atStartOfDay();
         LocalDateTime endOfDay = date.atTime(23, 59, 59);
-        return faultLogRepo.findByCreatedateBetween(startOfDay, endOfDay);
+        return faultLogRepo.findByCreatedatBetween(startOfDay, endOfDay);
     }
 
     @Override

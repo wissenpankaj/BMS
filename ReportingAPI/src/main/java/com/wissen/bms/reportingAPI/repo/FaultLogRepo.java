@@ -16,5 +16,5 @@ public interface FaultLogRepo extends JpaRepository<FaultLogModel, Integer> {
 
     List<FaultLogModel> findByFaulttype(String faulttype);
 
-    List<FaultLogModel> findByCreatedateBetween(LocalDateTime startDate, LocalDateTime endDate);
+    List<FaultLogModel> findByCreatedatBetween(LocalDateTime startDate, LocalDateTime endDate);
 }

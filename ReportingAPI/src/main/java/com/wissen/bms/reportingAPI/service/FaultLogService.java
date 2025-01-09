@@ -3,7 +3,6 @@ package com.wissen.bms.reportingAPI.service;
 import com.wissen.bms.reportingAPI.model.FaultLogModel;
 import org.springframework.stereotype.Service;
 import java.util.List;
-import java.sql.Timestamp;
 
 @Service
 public interface FaultLogService {
@@ -18,7 +17,7 @@ public interface FaultLogService {
     List<FaultLogModel> getFaultLogsByBatteryId(Integer batteryId);
 
     // Method to get fault logs by creation date
-    List<FaultLogModel> getFaultLogsByCreateDate(String createDate);
+    List<FaultLogModel> getFaultLogsByCreatedAt(String createDate);
 
     // Method to get fault logs by fault type
     List<FaultLogModel> getFaultLogsByFaultType(String faultType);
