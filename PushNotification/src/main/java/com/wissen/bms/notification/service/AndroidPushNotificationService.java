@@ -9,8 +9,9 @@ import java.util.Optional;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.wissen.bms.notification.model.BatteryFault;
+import com.wissen.bms.common.model.BatteryFault;
 import com.wissen.bms.notification.model.NotificationResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -44,6 +45,7 @@ public class AndroidPushNotificationService implements NotificationService {
 		} else {
 			// Real Mode
             try {
+				System.out.println("Sending email .. vehicleData : "+ vehicleData);
                 return sendRealNotification(deviceToken, vehicleData);
             } catch (Exception e) {
                 throw new RuntimeException(e);

@@ -23,9 +23,9 @@ public class NotificationServiceFactory {
             case "EMAIL":
                 return emailNotificationService;
             case "IOS_PUSH":
-                //return iOSPushNotificationService;
+                return iOSPushNotificationService;
             case "ANDROID_PUSH":
-                //return androidPushNotificationService;
+                return androidPushNotificationService;
             default:
                 throw new IllegalArgumentException("Unsupported notification type: " + type);
         }

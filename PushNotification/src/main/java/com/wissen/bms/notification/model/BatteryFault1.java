@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class BatteryFault {
+public class BatteryFault1 {
     private String gps;
     private String vehicleId;
     private String batteryId;
