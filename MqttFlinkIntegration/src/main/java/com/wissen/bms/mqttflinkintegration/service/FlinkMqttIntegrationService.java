@@ -71,7 +71,7 @@ public class FlinkMqttIntegrationService {
                 .map(EVUtil::deserializeTelemetryData)  // Convert String to TelemetryData
                 .assignTimestampsAndWatermarks(
                         WatermarkStrategy.<TelemetryData>forBoundedOutOfOrderness(Duration.ofSeconds(5)) // Handle late data with 5 second delay
-                                .withTimestampAssigner((event, timestamp) -> event.getTime()) // Use event timestamp for windowing
+                                .withTimestampAssigner((event, timestamp) -> event.getTimeStamp()) // Use event timestamp for windowing
                 )
                 .keyBy(TelemetryData::getBatteryId) // Group data by Battery ID
                 .timeWindow(Time.minutes(1)) // Create a 10-second tumbling window

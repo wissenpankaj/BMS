@@ -30,10 +30,12 @@ public class TelemetryData {
 //    private double latitude; // GPS coordinates
 //    private double longitude; // GPS coordinates
 
-    private long time;
+    private String time;
 
     private double internalResistance;
 
     private String riskLevel;
+
+    private long timeStamp;
 
 }
