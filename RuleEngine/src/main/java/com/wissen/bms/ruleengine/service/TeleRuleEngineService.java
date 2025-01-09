@@ -122,4 +122,25 @@ public class TeleRuleEngineService {
 
 		return ruleContext;
 	}
+
+
+	// Process single telemetry data
+	public RuleContext processSingleTelemetryData(TelemetryData telemetryData) {
+		Facts facts = new Facts();
+		facts.put("vehicleId", telemetryData.getVehicleId());
+		facts.put("voltage", telemetryData.getVoltage());
+		facts.put("temperature", telemetryData.getTemperature());
+		facts.put("internalResistance", telemetryData.getInternalResistance());
+
+		Map<Rule, Boolean> riskData = evaluateFacts(facts);
+		String riskClassifier = getRiskClassifier(riskData);
+
+		RuleContext ruleContext = new RuleContext();
+		ruleContext.setVehicleId(telemetryData.getVehicleId());
+		ruleContext.setRiskReason("Risk: " + riskClassifier);
+
+		return ruleContext;
+	}
+
+
 }

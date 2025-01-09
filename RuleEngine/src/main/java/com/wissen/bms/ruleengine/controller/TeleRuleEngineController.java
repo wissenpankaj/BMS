@@ -18,13 +18,14 @@ import com.wissen.bms.ruleengine.service.TeleRuleEngineService;
 @RequestMapping("ruleEngine")
 @Controller
 public class TeleRuleEngineController {
-		
+
 	@Autowired
 	TeleRuleEngineService teleRuleEngineService;
 
-	@GetMapping("/processData")
+	// Process list of telemetry data
+	@GetMapping("/processListData")
 	@ResponseBody
-	public Object evaluate() throws IllegalAccessException, InvocationTargetException {
+	public Object evaluateList() throws IllegalAccessException, InvocationTargetException {
 		// Create multiple telemetry data samples
 		List<TelemetryData> telemetryDataList = new ArrayList<>();
 		Gson gson = new Gson();
@@ -40,27 +41,36 @@ public class TeleRuleEngineController {
 		return teleRuleEngineService.processTelemetryData(telemetryDataList);
 	}
 
+	// Process single telemetry data
+	@GetMapping("/processSingleData")
+	@ResponseBody
+	public Object evaluateSingle() throws IllegalAccessException, InvocationTargetException {
+		// Create a single telemetry data sample
+		Gson gson = new Gson();
+		String telemetryDataStr = createTelemetryData();
+		TelemetryData telemetryData = gson.fromJson(telemetryDataStr, TelemetryData.class);
 
-	String createTelemetryData() {
-			Random random = new Random();
-			String vehicleId = "EV" + random.nextInt(10); // Simulate 10 different EVs
-			String batteryId = "B" + random.nextInt(10); // Simulate 10 different EVs
-		    return String.format(
-		            "{\"vehicleId\": \"%s\", \"batteryId\": \"%s\", \"voltage\": %.2f, \"current\": %.2f, \"soc\": %.2f, " +
-		                    "\"temperature\": %.2f, \"internalResistance\": %.3f, \"cycleCount\": %d, " +
-		                    "\"energyThroughput\": %.2f, \"chargingTime\": %.2f}",
-		            vehicleId,batteryId,
-		            300 + random.nextDouble() * 50, // Voltage
-		            random.nextDouble() * 100, // Current
-		            random.nextDouble() * 200, // State of Charge (SoC)
-		            20 + random.nextDouble() * 40, // Temperature
-		            random.nextDouble() * 0.1, // Internal resistance
-		            random.nextInt(1000), // Cycle count
-		            random.nextDouble() * 500, // Energy throughput
-		            random.nextDouble() * 10 // Charging time
-		    );   
+		System.out.println("Single Telemetry Data: " + telemetryData);
+		return teleRuleEngineService.processSingleTelemetryData(telemetryData);
 	}
 
-	
-	
+	String createTelemetryData() {
+		Random random = new Random();
+		String vehicleId = "EV" + random.nextInt(10); // Simulate 10 different EVs
+		String batteryId = "B" + random.nextInt(10); // Simulate 10 different batteries
+		return String.format(
+				"{\"vehicleId\": \"%s\", \"batteryId\": \"%s\", \"voltage\": %.2f, \"current\": %.2f, \"soc\": %.2f, " +
+						"\"temperature\": %.2f, \"internalResistance\": %.3f, \"cycleCount\": %d, " +
+						"\"energyThroughput\": %.2f, \"chargingTime\": %.2f}",
+				vehicleId, batteryId,
+				300 + random.nextDouble() * 50, // Voltage
+				random.nextDouble() * 100, // Current
+				random.nextDouble() * 200, // State of Charge (SoC)
+				20 + random.nextDouble() * 40, // Temperature
+				random.nextDouble() * 0.1, // Internal resistance
+				random.nextInt(1000), // Cycle count
+				random.nextDouble() * 500, // Energy throughput
+				random.nextDouble() * 10 // Charging time
+		);
+	}
 }
