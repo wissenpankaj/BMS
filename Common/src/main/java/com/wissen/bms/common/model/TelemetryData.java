@@ -36,4 +36,6 @@ public class TelemetryData {
 
     private String riskLevel;
 
+    private long timeStamp;
+
 }
