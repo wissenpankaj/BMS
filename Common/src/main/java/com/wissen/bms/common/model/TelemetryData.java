@@ -43,7 +43,7 @@ public class TelemetryData {
 
     private String gps; // GPS coordinates
 
-    private String time;
+    private long time;
 
     private double internalResistance;
 

@@ -2,7 +2,7 @@ package com.wissen.bms.mqttflinkintegration.service;
 
 import com.influxdb.client.InfluxDBClient;
 import com.influxdb.client.InfluxDBClientFactory;
-import com.wissen.bms.mqttflinkintegration.model.TelemetryData;
+import com.wissen.bms.common.model.TelemetryData;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.streaming.api.functions.sink.RichSinkFunction;

@@ -13,12 +13,8 @@ public class KafkaPublisher {
     @Value("${kafka.topic}")
     private String topic;
 
-    private final KafkaTemplate<String, String> kafkaTemplate;
-
     @Autowired
-    public KafkaPublisher(KafkaTemplate<String, String> kafkaTemplate) {
-        this.kafkaTemplate = kafkaTemplate;
-    }
+    private KafkaTemplate<String, String> kafkaTemplate;
 
     public void sendMessage(String message) {
         log.info("Inside @class KafkaPublisher @method send message topic : {}, message : {}", topic, message);
