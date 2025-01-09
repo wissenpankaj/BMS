@@ -30,9 +30,11 @@
     <modules>
         <module>RuleEngine</module>
         <module>ReportingAPI</module>
-        <module>mqtt-flink/mqtt-flink</module>
+        <module>MqttFlinkIntegration</module>
         <module>InfluxDBRepository</module>
         <module>Common</module>
+        <module>EvClient/JavaEvClient</module>
+
     </modules>
 
 </project>

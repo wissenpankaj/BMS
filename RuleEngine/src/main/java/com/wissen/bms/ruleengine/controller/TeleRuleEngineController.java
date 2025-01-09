@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.Gson;
-import com.ruleengine.EVBatteryRuleEngine.dto.*;
 import com.wissen.bms.ruleengine.service.InfluxDBService;
 import com.wissen.bms.ruleengine.service.TeleRuleEngineService;
 
