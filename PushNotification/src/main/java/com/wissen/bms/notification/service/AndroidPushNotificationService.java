@@ -9,21 +9,20 @@ import java.util.Optional;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.wissen.bms.notification.model.BatteryFault;
 import com.wissen.bms.notification.model.NotificationResponse;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import com.wissen.bms.notification.entity.UserSubscription;
-import com.wissen.bms.notification.model.VehicleData;
 
 @Component
 public class AndroidPushNotificationService implements NotificationService {
 	private static final String FCM_ENDPOINT = "https://fcm.googleapis.com/v1/projects/YOUR_PROJECT_ID/messages:send";
 
-	@Autowired
+//	@Autowired // // Need to uncomment this during real android push notification
 	private GoogleCredentials googleCredentials;
 
 	@Value("${mock:false}")
@@ -38,7 +37,7 @@ public class AndroidPushNotificationService implements NotificationService {
 	 * @throws Exception If an error occurs while sending the notification.
 	 */
 	@Override
-	public ResponseEntity<NotificationResponse> sendNotification(VehicleData vehicleData, Optional<UserSubscription> subscription, Optional<String> deviceToken) {
+	public ResponseEntity<NotificationResponse> sendNotification(BatteryFault vehicleData, Optional<UserSubscription> subscription, Optional<String> deviceToken) {
 		if (mock) {
 			// Mock Mode
 			return simulateNotification(deviceToken, vehicleData);
@@ -59,7 +58,7 @@ public class AndroidPushNotificationService implements NotificationService {
 	 * @param vehicleData The vehicle data object containing the information for the notification.
 	 * @return ResponseEntity with the mock success message.
 	 */
-	private ResponseEntity<NotificationResponse> simulateNotification(Optional<String> deviceToken, VehicleData vehicleData) {
+	private ResponseEntity<NotificationResponse> simulateNotification(Optional<String> deviceToken, BatteryFault vehicleData) {
 		System.out.println("Mock Mode Enabled: Simulating notification sending...");
 		System.out.println("Device Token: " + deviceToken);
 		System.out.println("Vehicle Data: " + vehicleData);
@@ -77,7 +76,7 @@ public class AndroidPushNotificationService implements NotificationService {
 	 * @return ResponseEntity with the real notification response.
 	 * @throws Exception If an error occurs while sending the notification.
 	 */
-	private ResponseEntity<NotificationResponse> sendRealNotification(Optional<String> deviceToken, VehicleData vehicleData) throws Exception {
+	private ResponseEntity<NotificationResponse> sendRealNotification(Optional<String> deviceToken, BatteryFault vehicleData) throws Exception {
 		if(deviceToken.isPresent()) {
 			// Refresh token if expired
 			googleCredentials.refreshIfExpired();
@@ -98,7 +97,7 @@ public class AndroidPushNotificationService implements NotificationService {
 			data.addProperty("gps", vehicleData.getGps());
 			data.addProperty("faultReason", vehicleData.getFaultReason());
 			data.addProperty("recommendation", vehicleData.getRecommendation());
-			data.addProperty("timestamp", vehicleData.getTimestamp());
+			data.addProperty("timestamp", vehicleData.getTime());
 
 			message.add("data", data);
 
@@ -149,14 +148,14 @@ public class AndroidPushNotificationService implements NotificationService {
 	 * @param vehicleData The vehicle data object.
 	 * @return The formatted payload string.
 	 */
-	private String buildPayload(VehicleData vehicleData) {
+	private String buildPayload(BatteryFault vehicleData) {
 		return String.format("{\"alert\":{\"title\":\"Risk: %s\", \"body\":\"Level: %s\"},\"sound\":\"default\"}," +
 						"\"data\":{\"batteryId\":\"%s\",\"vehicleId\":\"%s\",\"gps\":\"%s\",\"faultReason\":\"%s\"," +
 						"\"recommendation\":\"%s\",\"timestamp\":\"%s\"}",
 				vehicleData.getRisk(), vehicleData.getLevel(),
 				vehicleData.getBatteryId(), vehicleData.getVehicleId(),
 				vehicleData.getGps(), vehicleData.getFaultReason(),
-				vehicleData.getRecommendation(), vehicleData.getTimestamp());
+				vehicleData.getRecommendation(), vehicleData.getTime());
 	}
 
 }

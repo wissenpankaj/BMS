@@ -5,8 +5,8 @@ import com.eatthepath.pushy.apns.PushNotificationResponse;
 import com.eatthepath.pushy.apns.auth.ApnsSigningKey;
 import com.eatthepath.pushy.apns.util.SimpleApnsPushNotification;
 import com.wissen.bms.notification.entity.UserSubscription;
+import com.wissen.bms.notification.model.BatteryFault;
 import com.wissen.bms.notification.model.NotificationResponse;
-import com.wissen.bms.notification.model.VehicleData;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,7 +37,7 @@ public class iOSPushNotificationService implements NotificationService {
 	}
 
 	@Override
-	public ResponseEntity<NotificationResponse> sendNotification(VehicleData data, Optional<UserSubscription> subscription, Optional<String> deviceToken) {
+	public ResponseEntity<NotificationResponse> sendNotification(BatteryFault data, Optional<UserSubscription> subscription, Optional<String> deviceToken) {
 		if (mockMode) {
 			return sendMockNotification(deviceToken.orElse("unknown_device"), data);
 		} else {
@@ -45,7 +45,7 @@ public class iOSPushNotificationService implements NotificationService {
 		}
 	}
 
-	private ResponseEntity<NotificationResponse> sendRealNotification(String deviceToken, VehicleData data) {
+	private ResponseEntity<NotificationResponse> sendRealNotification(String deviceToken, BatteryFault data) {
 		try {
 			// Build the payload
 			String payload = buildPayload(data);
@@ -75,7 +75,7 @@ public class iOSPushNotificationService implements NotificationService {
 		}
 	}
 
-	private ResponseEntity<NotificationResponse> sendMockNotification(String deviceToken, VehicleData data) {
+	private ResponseEntity<NotificationResponse> sendMockNotification(String deviceToken, BatteryFault data) {
 		try {
 			// Build mock response data
 			String mockData = String.format("Mock notification for Vehicle: %s, Battery: %s, GPS: %s",
@@ -88,11 +88,11 @@ public class iOSPushNotificationService implements NotificationService {
 		}
 	}
 
-	private String buildPayload(VehicleData data) {
+	private String buildPayload(BatteryFault data) {
 		return String.format("{\"aps\":{\"alert\":{\"title\":\"Alert for Vehicle: %s\", \"body\":\"Battery: %s, GPS: %s\"},\"sound\":\"default\"}," +
 						"\"data\":{\"batteryId\":\"%s\",\"vehicleId\":\"%s\",\"gps\":\"%s\",\"timestamp\":\"%s\"}}",
 				data.getVehicleId(), data.getBatteryId(), data.getGps(),
 				data.getBatteryId(), data.getVehicleId(),
-				data.getGps(), data.getTimestamp());
+				data.getGps(), data.getTime());
 	}
 }
