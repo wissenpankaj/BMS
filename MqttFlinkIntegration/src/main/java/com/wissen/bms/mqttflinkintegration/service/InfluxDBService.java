@@ -4,6 +4,7 @@ import com.influxdb.client.InfluxDBClient;
 import com.influxdb.client.WriteApiBlocking;
 import com.influxdb.client.domain.WritePrecision;
 import com.influxdb.client.write.Point;
+import com.wissen.bms.common.model.BatteryFault;
 import com.wissen.bms.common.model.TelemetryData;
 import lombok.extern.slf4j.Slf4j;
 
@@ -45,6 +46,37 @@ public class InfluxDBService {
                 .addField("energyThroughput", value.getEnergyThroughput()) // Field: energy throughput
                 .addField("chargingTime", value.getChargingTime())         // Field: charging time
                 .addField("cycleCount", value.getCycleCount())             // Field: cycle count
+                .addField("gps", value.getGps());
+
+        try {
+            writeApi.writePoint(influxDbBucket, influxDbOrg, point);
+        } catch (Exception e) {
+            System.err.println("Error writing to InfluxDB: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    // Write data to InfluxDB
+    public void writeFaultData(BatteryFault value) {
+        log.trace("Inside @class InfluxDBService @method writeData Battery fault data : {}", value);
+        if (value == null) {
+            log.info("Telemetry data is null");
+            return;
+        }
+
+
+        String MEASUREMENT = "Battery_Fault_Data";
+
+        WriteApiBlocking writeApi = influxDBClient.getWriteApiBlocking();
+        Point point = Point.measurement(MEASUREMENT)
+                .time(Instant.now(), WritePrecision.NS)
+                .addTag("batteryId", value.getBatteryId())    // Tag: batteryId
+                .addTag("vehicleId", value.getVehicleId())      // Tag: vehicleId
+                .addField("faultReason", value.getFaultReason()) // Field: fault reason
+                .addField("recommendation", value.getRecommendation()) // Field: recommendation
+                .addField("time", value.getTime())               // Field: time
+                .addField("level", value.getLevel())             // Field: level
+                .addField("risk", value.getRisk())               // Field: risk
                 .addField("gps", value.getGps());
 
         try {

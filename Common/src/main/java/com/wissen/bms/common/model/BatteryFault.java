@@ -1,12 +1,5 @@
 package com.wissen.bms.common.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
 public class BatteryFault {
     private String gps;
     private String vehicleId;
@@ -29,6 +22,70 @@ public class BatteryFault {
                 ", level='" + level + '\'' +
                 ", risk='" + risk + '\'' +
                 '}';
+    }
+
+    public String getGps() {
+        return gps;
+    }
+
+    public void setGps(String gps) {
+        this.gps = gps;
+    }
+
+    public String getVehicleId() {
+        return vehicleId;
+    }
+
+    public void setVehicleId(String vehicleId) {
+        this.vehicleId = vehicleId;
+    }
+
+    public String getBatteryId() {
+        return batteryId;
+    }
+
+    public void setBatteryId(String batteryId) {
+        this.batteryId = batteryId;
+    }
+
+    public String getFaultReason() {
+        return faultReason;
+    }
+
+    public void setFaultReason(String faultReason) {
+        this.faultReason = faultReason;
+    }
+
+    public String getRecommendation() {
+        return recommendation;
+    }
+
+    public void setRecommendation(String recommendation) {
+        this.recommendation = recommendation;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
+
+    public String getLevel() {
+        return level;
+    }
+
+    public void setLevel(String level) {
+        this.level = level;
+    }
+
+    public String getRisk() {
+        return risk;
+    }
+
+    public void setRisk(String risk) {
+        this.risk = risk;
     }
 }
 

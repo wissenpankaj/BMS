@@ -38,7 +38,7 @@ public class GradualDegradationProcessor {
                 BatteryFault batteryFault = EVUtil.convertRuleContextToBatteryFault(ruleContext);
                 batteryFault.setGps(batteryTelemetry.get(0).getGps());
                 batteryFault.setTime(String.valueOf(batteryTelemetry.get(0).getTime()));
-                String batteryFault1 = EVUtil.deserializeBatteryFault(batteryFault);
+                String batteryFault1 = EVUtil.serializeBatteryFault(batteryFault);
                 kafkaPublisher.sendMessage(batteryFault1);
             }
         }

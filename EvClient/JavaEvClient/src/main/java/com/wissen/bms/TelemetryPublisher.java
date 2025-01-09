@@ -6,6 +6,7 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import com.google.gson.Gson;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Random;
 import java.util.Timer;
@@ -15,7 +16,7 @@ public class TelemetryPublisher {
 
     private static final String BROKER_URL = "tcp://localhost:1883"; // MQTT broker URL
     private static final String CLIENT_ID = "TelemetryPublisher";
-    private static final String TOPIC = "vehicle/telemetry";
+    private static final String TOPIC = "ev/fleet/battery/telemetry";
 
     public static void main(String[] args) {
         try {
@@ -69,7 +70,7 @@ public class TelemetryPublisher {
 
         data.setBatteryId("BATTERY-" + random.nextInt(100));
         data.setVehicleId("VEHICLE-" + random.nextInt(1000));
-        data.setVoltage(3.0 + random.nextDouble() * 0.5); // Voltage (3.0V - 3.5V)
+        data.setVoltage(3.0 + random.nextDouble() * 5); // Voltage (3.0V - 3.5V)
         data.setCurrent(random.nextDouble() * 100); // Current (0 - 100A)
         data.setSoc(random.nextDouble() * 100); // SOC (0-100%)
         data.setSoh(random.nextDouble() * 100); // SOH (0-100%)
@@ -78,7 +79,9 @@ public class TelemetryPublisher {
         data.setChargingTime(random.nextDouble() * 120); // Charging time (0-120 minutes)
         data.setCycleCount(random.nextInt(500)); // Charge cycles
         data.setGps("Lat: " + (random.nextDouble() * 180 - 90) + ", Lon: " + (random.nextDouble() * 360 - 180));
-        data.setTime(LocalDateTime.now().toString()); // Current timestamp
+//        data.setTime(LocalDateTime.now().toString()); // Current timestamp
+        data.setTime(Instant.now().toString());
+        data.setTimeStamp(System.currentTimeMillis());
 
         return data;
     }

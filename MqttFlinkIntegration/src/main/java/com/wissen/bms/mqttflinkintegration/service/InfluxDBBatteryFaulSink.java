@@ -1,14 +1,16 @@
+
 package com.wissen.bms.mqttflinkintegration.service;
 
 import com.influxdb.client.InfluxDBClient;
 import com.influxdb.client.InfluxDBClientFactory;
+import com.wissen.bms.common.model.BatteryFault;
 import com.wissen.bms.common.model.TelemetryData;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.streaming.api.functions.sink.RichSinkFunction;
 
 @Slf4j
-public class InfluxDBSink extends RichSinkFunction<TelemetryData> {
+public class InfluxDBBatteryFaulSink extends RichSinkFunction<BatteryFault> {
 
     private transient InfluxDBService influxDBService;
 
@@ -33,9 +35,9 @@ public class InfluxDBSink extends RichSinkFunction<TelemetryData> {
     }
 
     @Override
-    public void invoke(TelemetryData value, Context context) {
+    public void invoke(BatteryFault value, Context context) {
         if (influxDBService != null) {
-            influxDBService.writeData(value);
+            influxDBService.writeFaultData(value);
         } else {
             System.err.println("InfluxDBService is not initialized.");
         }

@@ -10,6 +10,7 @@ import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.api.common.state.ValueState;
 import org.apache.flink.api.common.state.ValueStateDescriptor;
 import org.apache.flink.streaming.api.datastream.DataStream;
+import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.KeyedProcessFunction;
 import org.apache.flink.streaming.api.functions.source.SourceFunction;
@@ -32,8 +33,8 @@ import java.util.List;
 @Slf4j
 public class FlinkMqttIntegrationService {
 
-    @Autowired
-    private TeleRuleEngineService teleRuleEngineService;
+//    @Autowired
+    private TeleRuleEngineService teleRuleEngineService = new TeleRuleEngineService();
 
 
     @Value("${mqtt.broker.url}")
@@ -61,11 +62,13 @@ public class FlinkMqttIntegrationService {
                 .addSink(new InfluxDBSink());
 
 
-        telemetryStream
+        SingleOutputStreamOperator<String> process = telemetryStream
                 .map(EVUtil::deserializeTelemetryData)
                 .keyBy(TelemetryData::getBatteryId)
-                .process(new CriticalThresholdProcessFunction(teleRuleEngineService))
-                .addSink(kafkaProducer);
+                .process(new CriticalThresholdProcessFunction(teleRuleEngineService));
+        process.addSink(kafkaProducer);
+        process.map(EVUtil::deserializeBatteryFault).addSink(new InfluxDBBatteryFaulSink());
+
 
         telemetryStream
                 .map(EVUtil::deserializeTelemetryData)  // Convert String to TelemetryData
@@ -74,7 +77,7 @@ public class FlinkMqttIntegrationService {
                                 .withTimestampAssigner((event, timestamp) -> event.getTimeStamp()) // Use event timestamp for windowing
                 )
                 .keyBy(TelemetryData::getBatteryId) // Group data by Battery ID
-                .timeWindow(Time.minutes(1)) // Create a 10-second tumbling window
+                .timeWindow(Time.minutes(5)) // Create a 10-second tumbling window
                 .apply(new BatchProcessor(teleRuleEngineService))
                 .addSink(kafkaProducer); // Process data within each 10-second window
 
@@ -144,15 +147,18 @@ public class FlinkMqttIntegrationService {
             log.info("Inside @class FlinkMqttIntegrationService BatchProcessor @method apply key : {}, timeWindow : {}, input: {}", key, timeWindow, input);
             input.forEach(batch::add);
 
-//            RuleContext ruleContext = ruleEngineService.processTelemetryData(batch);
+            log.info("Inside @class FlinkMqttIntegrationService BatchProcessor size : {}",batch.size());
 
-            RuleContext ruleContext = new RuleContext();
+            RuleContext ruleContext = ruleEngineService.processTelemetryData(batch);
+            log.info("ruleContext BatchProcessor @method apply ruleContext : {}", ruleContext);
+
             if ("High".equals(ruleContext.getRiskLevel())) {
                 BatteryFault batteryFault = EVUtil.convertRuleContextToBatteryFault(ruleContext);
                 batteryFault.setGps(batch.get(0).getGps());
                 batteryFault.setTime(String.valueOf(batch.get(0).getTime()));
-                String batteryFault1 = EVUtil.deserializeBatteryFault(batteryFault);
+                String batteryFault1 = EVUtil.serializeBatteryFault(batteryFault);
                 out.collect(batteryFault1);
+                log.info("ruleContext BatchProcessor @method apply risk High");
             }
 
         }
@@ -178,21 +184,21 @@ public class FlinkMqttIntegrationService {
         @Override
         public void processElement(TelemetryData telemetryData, KeyedProcessFunction<String, TelemetryData, String>.Context context, Collector<String> out) throws Exception {
 
-//           RuleContext ruleContext = ruleEngineService.processTelemetryData(new ArrayList(telemetryData));
-
-            RuleContext ruleContext = new RuleContext();
-            if ("High".equals(ruleContext.getRiskLevel())) {
+            log.info("telemetryData data : {}", telemetryData);
+           RuleContext ruleContext = ruleEngineService.processSingleTelemetryData(telemetryData);
+           log.info("ruleContext data : {}", ruleContext);
+            if ("Critical".equals(ruleContext.getRiskLevel())) {
                 BatteryFault batteryFault = EVUtil.convertRuleContextToBatteryFault(ruleContext);
                 batteryFault.setGps(telemetryData.getGps());
                 batteryFault.setTime(String.valueOf(telemetryData.getTime()));
-                String batteryFault1 = EVUtil.deserializeBatteryFault(batteryFault);
+                String batteryFault1 = EVUtil.serializeBatteryFault(batteryFault);
                 out.collect(batteryFault1);
+                log.info("going to collect FaultSink @method invoke");
             }
 
             TelemetryData lastTelemetry = lastTelemetryState.value();
 
 //            RuleContext ruleContext = ruleEngineService.processTelemetryData(telemetryData, lastTelemetry);
-            log.info("going to collect FaultSink @method invoke");
             lastTelemetryState.update(telemetryData);
         }
     }
