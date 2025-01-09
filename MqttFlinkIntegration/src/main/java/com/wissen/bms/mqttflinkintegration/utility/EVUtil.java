@@ -2,9 +2,9 @@ package com.wissen.bms.mqttflinkintegration.utility;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.ruleengine.EVBatteryRuleEngine.rules.RuleContext;
 import com.wissen.bms.common.model.BatteryFault;
 import com.wissen.bms.common.model.TelemetryData;
+import com.wissen.bms.ruleengine.rules.RuleContext;
 
 public class EVUtil {
 
