@@ -1,8 +1,9 @@
-package com.wissen.bms.common.model;
+package com.publisher.model;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
-
-public class TelemetryData {
+public class TelemetryData1 {
 
     private String batteryId;
 
@@ -156,24 +157,27 @@ public class TelemetryData {
         this.timeStamp = timeStamp;
     }
 
-    @Override
-    public String toString() {
-        return "TelemetryData{" +
-                "batteryId='" + batteryId + '\'' +
-                ", vehicleId='" + vehicleId + '\'' +
-                ", voltage=" + voltage +
-                ", current=" + current +
-                ", soc=" + soc +
-                ", soh=" + soh +
-                ", temperature=" + temperature +
-                ", energyThroughput=" + energyThroughput +
-                ", chargingTime=" + chargingTime +
-                ", cycleCount=" + cycleCount +
-                ", gps='" + gps + '\'' +
-                ", time='" + time + '\'' +
-                ", internalResistance=" + internalResistance +
-                ", riskLevel='" + riskLevel + '\'' +
-                ", timeStamp=" + timeStamp +
-                '}';
+
+    public String convertObjToString() {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.registerModule(new JavaTimeModule()); // Register for handling time if needed
+            return objectMapper.writeValueAsString(this);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    // Deserialize from JSON string back to object
+    public static TelemetryData1 convertStringToObj(String json) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.registerModule(new JavaTimeModule());
+            return objectMapper.readValue(json, TelemetryData1.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

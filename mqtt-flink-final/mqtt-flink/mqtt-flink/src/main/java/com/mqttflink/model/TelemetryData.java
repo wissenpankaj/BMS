@@ -1,41 +1,45 @@
-package com.wissen.bms.common.model;
+package com.mqttflink.model;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
+import java.io.Serializable;
 
 public class TelemetryData {
-
     private String batteryId;
-
     private String vehicleId;
-
     private Double voltage;
-
     private Double current;
-
-
-    private double soc; // State of Charge in %
-
-    private double soh; // State of Health in %
-
-    private double temperature; // Temperature in °C
-
+    private double soc;             // State of Charge in %
+    private double soh;             // State of Health in %
+    private double temperature;     // Temperature in °C
     private double energyThroughput; // Energy throughput (in Wh)
+    private double chargingTime;     // Charging time (in minutes)
+    private int cycleCount;         // Charge cycles
+    private String gps;             // GPS coordinates
+    private long time;              // Timestamp of telemetry data
 
-    private double chargingTime; // Charging time (in minutes)
+    // Constructor
+    public TelemetryData() {
+    }
 
-    private int cycleCount; // Charge cycles
-    private String gps;
-//    private double latitude; // GPS coordinates
-//    private double longitude; // GPS coordinates
+    public TelemetryData(String batteryId, String vehicleId, Double voltage, Double current, double soc, double soh,
+                         double temperature, double energyThroughput, double chargingTime, int cycleCount, String gps, long time) {
+        this.batteryId = batteryId;
+        this.vehicleId = vehicleId;
+        this.voltage = voltage;
+        this.current = current;
+        this.soc = soc;
+        this.soh = soh;
+        this.temperature = temperature;
+        this.energyThroughput = energyThroughput;
+        this.chargingTime = chargingTime;
+        this.cycleCount = cycleCount;
+        this.gps = gps;
+        this.time = time;
+    }
 
-    private String time;
-
-    private double internalResistance;
-
-    private String riskLevel;
-
-    private long timeStamp;
-
+    // Getters and Setters
     public String getBatteryId() {
         return batteryId;
     }
@@ -124,36 +128,12 @@ public class TelemetryData {
         this.gps = gps;
     }
 
-    public String getTime() {
+    public long getTime() {
         return time;
     }
 
-    public void setTime(String time) {
+    public void setTime(long time) {
         this.time = time;
-    }
-
-    public double getInternalResistance() {
-        return internalResistance;
-    }
-
-    public void setInternalResistance(double internalResistance) {
-        this.internalResistance = internalResistance;
-    }
-
-    public String getRiskLevel() {
-        return riskLevel;
-    }
-
-    public void setRiskLevel(String riskLevel) {
-        this.riskLevel = riskLevel;
-    }
-
-    public long getTimeStamp() {
-        return timeStamp;
-    }
-
-    public void setTimeStamp(long timeStamp) {
-        this.timeStamp = timeStamp;
     }
 
     @Override
@@ -170,10 +150,31 @@ public class TelemetryData {
                 ", chargingTime=" + chargingTime +
                 ", cycleCount=" + cycleCount +
                 ", gps='" + gps + '\'' +
-                ", time='" + time + '\'' +
-                ", internalResistance=" + internalResistance +
-                ", riskLevel='" + riskLevel + '\'' +
-                ", timeStamp=" + timeStamp +
+                ", time=" + time +
                 '}';
+    }
+
+    // Convert object to JSON string
+    public String convertObjToString() {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.registerModule(new JavaTimeModule()); // Register for handling time if needed
+            return objectMapper.writeValueAsString(this);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    // Deserialize from JSON string back to object
+    public static TelemetryData convertStringToObj(String json) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.registerModule(new JavaTimeModule());
+            return objectMapper.readValue(json, TelemetryData.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }
