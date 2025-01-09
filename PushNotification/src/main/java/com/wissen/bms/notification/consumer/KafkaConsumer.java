@@ -2,6 +2,7 @@ package com.wissen.bms.notification.consumer;
 
 import java.util.Optional;
 
+import com.wissen.bms.notification.model.BatteryFault;
 import com.wissen.bms.notification.service.NotificationService;
 import com.wissen.bms.notification.factory.NotificationServiceFactory;
 import com.wissen.bms.notification.repository.UserSubscriptionRepository;
@@ -12,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 
 import com.wissen.bms.notification.entity.UserSubscription;
-import com.wissen.bms.notification.model.VehicleData;
 
 //import io.reactivex.rxjava3.internal.subscriptions.SubscriptionHelper;
 
@@ -31,7 +31,7 @@ public class KafkaConsumer {
 	private static final String TOPIC_NAME = "faultalert";
 
 	@KafkaListener(topics = TOPIC_NAME, groupId = "vehicle-group")
-	public void listen(VehicleData vehicleData) { // Check if the fault reason is not empty or null
+	public void listen(BatteryFault vehicleData) { // Check if the fault reason is not empty or null
 		if (vehicleData.getFaultReason() != null && !vehicleData.getFaultReason().isEmpty()) { // Prepare the email
 																								// content
 
@@ -39,7 +39,7 @@ public class KafkaConsumer {
 
 			String body = "Fault Reason: " + vehicleData.getFaultReason() + "\nRisk Level: " + vehicleData.getRisk()
 					+ "\nRecommendation: " + vehicleData.getRecommendation() + "\nTimestamp: "
-					+ vehicleData.getTimestamp();
+					+ vehicleData.getTime();
 
 			String recipientEmail = "RECIPIENT_EMAIL";    // Replace with actual emailaddress
 

@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-@Configuration
+// @Configuration // Need to uncomment this during real android push notification
 public class FirebaseConfig {
     @Value("${firebase.credentials.path}")
     private String credentialsPath;
