@@ -1,10 +1,10 @@
 package com.wissen.bms.mqttflinkintegration.service;
 
-import com.ruleengine.EVBatteryRuleEngine.rules.RuleContext;
-import com.ruleengine.EVBatteryRuleEngine.service.TeleRuleEngineService;
 import com.wissen.bms.common.model.BatteryFault;
 import com.wissen.bms.common.model.TelemetryData;
 import com.wissen.bms.mqttflinkintegration.utility.EVUtil;
+import com.wissen.bms.ruleengine.rules.RuleContext;
+import com.wissen.bms.ruleengine.service.TeleRuleEngineService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.api.common.state.ValueState;

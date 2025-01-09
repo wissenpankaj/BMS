@@ -21,7 +21,7 @@ import org.springframework.stereotype.Service;
 
 import com.influxdb.query.FluxRecord;
 import com.influxdb.query.FluxTable;
-import com.ruleengine.EVBatteryRuleEngine.dto.*;
+
 import com.wissen.bms.ruleengine.rules.CycleCountRule;
 import com.wissen.bms.ruleengine.rules.EnergyThroughputRule;
 import com.wissen.bms.ruleengine.rules.RiskClassificationRule;

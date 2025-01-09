@@ -1,7 +1,7 @@
 package com.wissen.bms.mqttflinkintegration.service;
 
-import com.ruleengine.EVBatteryRuleEngine.rules.RuleContext;
 import lombok.extern.slf4j.Slf4j;
+import com.wissen.bms.ruleengine.rules.RuleContext;
 import org.apache.flink.streaming.api.functions.sink.SinkFunction;
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer;
 

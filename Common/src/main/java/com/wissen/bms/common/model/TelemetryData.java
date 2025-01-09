@@ -2,7 +2,6 @@ package com.wissen.bms.common.model;
 
 
 import lombok.Data;
-import lombok.Getter;
 
 @Data
 public class TelemetryData {
@@ -27,21 +26,9 @@ public class TelemetryData {
     private double chargingTime; // Charging time (in minutes)
 
     private int cycleCount; // Charge cycles
-
-    public double getInternalResistance() {
-        return internalResistance;
-    }
-
-    @Override
-    public String toString() {
-        return "TelemetryData [batteryId=" + batteryId + ", vehicleId=" + vehicleId + ", voltage=" + voltage
-                + ", current=" + current + ", soc=" + soc + ", soh=" + soh + ", temperature=" + temperature
-                + ", energyThroughput=" + energyThroughput + ", chargingTime=" + chargingTime + ", cycleCount="
-                + cycleCount + ", gps=" + gps + ", time=" + time + ", internalResistance=" + internalResistance
-                + ", riskLevel=" + riskLevel + "]";
-    }
-
-    private String gps; // GPS coordinates
+    private String gps;
+//    private double latitude; // GPS coordinates
+//    private double longitude; // GPS coordinates
 
     private long time;
 

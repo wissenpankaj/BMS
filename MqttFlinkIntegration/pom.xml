@@ -137,7 +137,7 @@
 
 
 		<dependency>
-			<groupId>com.wissen.RuleEngine</groupId>
+			<groupId>com.wissen.bms</groupId>
 			<artifactId>EVBatteryRuleEngine</artifactId>
 			<version>${project.version}</version>
 			<exclusions>
