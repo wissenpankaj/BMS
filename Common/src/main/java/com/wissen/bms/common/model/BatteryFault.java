@@ -12,16 +12,5 @@ public class BatteryFault {
     private String recommendation;
     private String time;
 
-    @Override
-    public String toString() {
-        return "BatteryFault{" +
-                "gps='" + gps + '\'' +
-                ", vehicleId='" + vehicleId + '\'' +
-                ", batteryId='" + batteryId + '\'' +
-                ", faultReason='" + faultReason + '\'' +
-                ", recommendation='" + recommendation + '\'' +
-                ", time='" + time + '\'' +
-                '}';
-    }
 }
 

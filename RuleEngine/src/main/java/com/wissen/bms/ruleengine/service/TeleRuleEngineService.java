@@ -12,6 +12,17 @@ import org.jeasy.rules.api.Rules;
 import org.jeasy.rules.api.RulesEngine;
 import org.jeasy.rules.core.DefaultRulesEngine;
 import org.springframework.stereotype.Service;
+import com.wissen.bms.ruleengine.rules.CycleCountRule;
+import com.wissen.bms.ruleengine.rules.EnergyThroughputRule;
+import com.wissen.bms.ruleengine.rules.RiskClassificationRule;
+import com.wissen.bms.ruleengine.rules.RuleContext;
+import com.wissen.bms.ruleengine.rules.SOCDeviationRule;
+import com.wissen.bms.ruleengine.rules.SOHDeviationRule;
+import com.wissen.bms.ruleengine.rules.TelemetryCriticalRule;
+import com.wissen.bms.ruleengine.rules.TelemetryHighRiskRule;
+import com.wissen.bms.ruleengine.rules.TelemetryModerateRule;
+import com.wissen.bms.ruleengine.rules.TemperatureSpikeRule;
+import com.wissen.bms.ruleengine.rules.VoltageDeviationRule;
 
 @Service
 public class TeleRuleEngineService {

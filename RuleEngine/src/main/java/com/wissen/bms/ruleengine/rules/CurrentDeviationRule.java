@@ -6,6 +6,7 @@ import com.wissen.bms.common.model.TelemetryData;
 import org.jeasy.rules.api.Facts;
 import org.jeasy.rules.api.Rule;
 
+
 public class CurrentDeviationRule implements Rule {
 
 	private List<TelemetryData> histTeleData;
