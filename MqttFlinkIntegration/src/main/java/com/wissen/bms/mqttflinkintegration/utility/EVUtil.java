@@ -8,7 +8,7 @@ import com.wissen.bms.ruleengine.rules.RuleContext;
 
 public class EVUtil {
 
-    public static String deserializeBatteryFault(BatteryFault batteryFault){
+    public static String serializeBatteryFault(BatteryFault batteryFault){
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             objectMapper.registerModule(new JavaTimeModule()); // Register for handling time if needed
@@ -16,6 +16,18 @@ public class EVUtil {
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("Exception occurred on parsing BatteryFault");
+        }
+    }
+
+    public static BatteryFault deserializeBatteryFault(String batteryFaultJson){
+
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.registerModule(new JavaTimeModule());
+            return objectMapper.readValue(batteryFaultJson, BatteryFault.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Exception occurred on deserializing Telemetry Data");
         }
     }
 
