@@ -34,7 +34,7 @@ public class KafkaConsumer {
 	public void listen(BatteryFault vehicleData) { // Check if the fault reason is not empty or null
 		if (vehicleData.getFaultReason() != null && !vehicleData.getFaultReason().isEmpty()) { // Prepare the email
 																								// content
-
+			System.out.println("fault data : "+vehicleData);
 			String subject = "Fault Alert for Vehicle " + vehicleData.getVehicleId();
 
 			String body = "Fault Reason: " + vehicleData.getFaultReason() + "\nRisk Level: " + vehicleData.getRisk()
@@ -49,6 +49,7 @@ public class KafkaConsumer {
 			//Dynamic decision to send notification based on subscription
 		Optional<UserSubscription> subscription = userSubscriptionRepository.findById(vehicleData.getVehicleId());//Call to DB
 
+			System.out.println("subscription data : "+subscription);
             // Get the appropriate notification service and send the notification
             NotificationService notificationService =
                     notificationServiceFactory.getNotificationService(subscription.get().getNotificationType());

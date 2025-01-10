@@ -1,0 +1,2 @@
+INSERT INTO UserSubscription(vehicleId, notificationType, deviceToken, emailID) VALUES('user123', 'EMAIL', NULL, NULL), ('user456', 'IOS_PUSH', 'iosDevice123', NULL), ('user789', 'ANDROID_PUSH', 'androidDev456', NULL);
+INSERT INTO user_subscription(vehicle_Id, notification_Type, device_Token, email_ID) VALUES('user123', 'EMAIL', NULL, NULL), ('user456', 'IOS_PUSH', 'iosDevice123', NULL), ('user789', 'ANDROID_PUSH', 'androidDev456', NULL);
