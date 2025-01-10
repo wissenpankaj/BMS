@@ -1,0 +1,17 @@
+version: '3'
+services:
+  postgres:
+    image: postgres:latest
+    container_name: my-postgres
+    environment:
+      POSTGRES_USER: postgres             # Default username
+      POSTGRES_PASSWORD: Postgres2025     # Password for the user
+      POSTGRES_DB: battery-inventory-system  # The database to be created
+    ports:
+      - "5432:5432"  
+    volumes:
+      - postgres_data:/var/lib/postgresql/data  
+volumes:
+  postgres_data:
+    driver: local
+
