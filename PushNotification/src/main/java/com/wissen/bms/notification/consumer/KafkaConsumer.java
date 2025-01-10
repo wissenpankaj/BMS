@@ -1,6 +1,7 @@
 package com.wissen.bms.notification.consumer;
 
 import java.util.Optional;
+import java.util.Random;
 
 import com.wissen.bms.common.model.BatteryFault;
 import com.wissen.bms.notification.service.NotificationService;
@@ -49,7 +50,12 @@ public class KafkaConsumer {
 			usersubscription.setVehicleId(vehicleData.getVehicleId());
 			usersubscription.setEmail_Id(recipientEmail);
 			usersubscription.setToken("abcdef");
-			usersubscription.setNotificationType("EMAIL");
+			
+			String[] notificationTypes = {"EMAIL", "IOS_PUSH", "ANDROID_PUSH"};
+			Random random = new Random();
+			String randomNotificationType = notificationTypes[random.nextInt(notificationTypes.length)];
+			usersubscription.setNotificationType(randomNotificationType);
+			
 			
 			
 			userSubscriptionRepository.save(usersubscription);
