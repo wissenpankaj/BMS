@@ -2,7 +2,7 @@ package com.wissen.bms.ruleengine.rules;
 
 import java.util.List;
 
-import com.ruleengine.EVBatteryRuleEngine.dto.*;
+
 import com.wissen.bms.common.model.TelemetryData;
 
 import java.util.ArrayList;

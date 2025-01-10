@@ -6,7 +6,7 @@ import com.wissen.bms.common.model.TelemetryData;
 import org.jeasy.rules.api.Facts;
 import org.jeasy.rules.api.Rule;
 
-import com.ruleengine.EVBatteryRuleEngine.dto.*;
+
 
 public class TemperatureSpikeRule implements Rule {
 

@@ -33,6 +33,9 @@
         <module>MqttFlinkIntegration</module>
         <module>InfluxDBRepository</module>
         <module>Common</module>
+        <module>EvClient/JavaEvClient</module>
+        <module>PushNotification</module>
+
     </modules>
 
 </project>

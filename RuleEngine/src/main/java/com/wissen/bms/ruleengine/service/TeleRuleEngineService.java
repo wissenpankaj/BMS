@@ -1,27 +1,18 @@
 package com.wissen.bms.ruleengine.service;
 
+import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import com.wissen.bms.common.model.TelemetryData;
-import com.wissen.bms.ruleengine.rules.ChargingTimeRule;
-import com.wissen.bms.ruleengine.rules.CurrentDeviationRule;
-import org.apache.commons.beanutils.BeanUtils;
+import com.wissen.bms.ruleengine.rules.*;
 import org.jeasy.rules.api.Facts;
 import org.jeasy.rules.api.Rule;
 import org.jeasy.rules.api.Rules;
 import org.jeasy.rules.api.RulesEngine;
 import org.jeasy.rules.core.DefaultRulesEngine;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import com.influxdb.query.FluxRecord;
-import com.influxdb.query.FluxTable;
-import com.ruleengine.EVBatteryRuleEngine.dto.*;
 import com.wissen.bms.ruleengine.rules.CycleCountRule;
 import com.wissen.bms.ruleengine.rules.EnergyThroughputRule;
 import com.wissen.bms.ruleengine.rules.RiskClassificationRule;
@@ -34,40 +25,25 @@ import com.wissen.bms.ruleengine.rules.TelemetryModerateRule;
 import com.wissen.bms.ruleengine.rules.TemperatureSpikeRule;
 import com.wissen.bms.ruleengine.rules.VoltageDeviationRule;
 
-@Service
-public class TeleRuleEngineService {
+public class TeleRuleEngineService implements Serializable {
+	private static final long serialVersionUID = 1L;
 
-	@Value("${influxdb.org}")
-	private String influxDbOrg;
-
-	@Value("${influxdb.bucket}")
-	private String influxDbBucket;
-
-	@Autowired
-	private InfluxDBService influxDBService;
-
-	public List<FluxTable> queryData(String batteryId) {
-		influxDBService.writeFaultAlert("", "", "", "", 1);
-		return influxDBService.queryData(influxDbBucket, influxDbOrg, batteryId);
-	}
-
-	// Process the raw telemetry data and create a fact
-	public Facts createTelemetryFact(TelemetryData telemetryData) {
+	// Process the raw telemetry data and create facts
+	public Facts createTelemetryFacts(List<TelemetryData> telemetryDataList) {
 		Facts facts = new Facts();
-
-		facts.put("vehicleId", telemetryData.getVehicleId());
-		facts.put("voltage", telemetryData.getVoltage());
-		facts.put("temperature", telemetryData.getTemperature());
-		facts.put("internalResistance", telemetryData.getInternalResistance());
+		for (TelemetryData telemetryData : telemetryDataList) {
+			facts.put("vehicleId", telemetryData.getVehicleId());
+			facts.put("voltage", telemetryData.getVoltage());
+			facts.put("temperature", telemetryData.getTemperature());
+			facts.put("internalResistance", telemetryData.getInternalResistance());
+		}
 		return facts;
 	}
 
-	// Evaluate fact based on rules
-	Map<Rule, Boolean> evaluateFact(Facts telemetryFact) {
-		// Create the rule engine
+	// Evaluate facts based on rules
+	public Map<Rule, Boolean> evaluateFacts(Facts telemetryFacts) {
 		RulesEngine ruleEngine = new DefaultRulesEngine();
 
-		// Create and add the rule
 		Rule telemetryCriticalRule = new TelemetryCriticalRule();
 		Rule telemetryHighRiskRule = new TelemetryHighRiskRule();
 		Rule telemetryModerateRule = new TelemetryModerateRule();
@@ -77,23 +53,15 @@ public class TeleRuleEngineService {
 		rules.register(telemetryHighRiskRule);
 		rules.register(telemetryModerateRule);
 
-		// Evaluate the rules
-		Map<Rule, Boolean> result = ruleEngine.check(rules, telemetryFact);
-
-		return result;
+		return ruleEngine.check(rules, telemetryFacts);
 	}
 
-	// get RiskClassifier
-	String getRiskClassifier(Map<Rule, Boolean> riskData) {
+	// Get RiskClassifier
+	public String getRiskClassifier(Map<Rule, Boolean> riskData) {
 		int highestPriority = 0;
 		String riskLevel = "No Risk";
 
 		for (Map.Entry<Rule, Boolean> entry : riskData.entrySet()) {
-			System.out.print("Risk Level: " + entry.getKey().getName() + " ");
-			System.out.print("Has Risk: " + entry.getValue() + " ");
-			System.out.print("Priority: " + entry.getKey().getPriority() + " ");
-			System.out.println();
-
 			if (entry.getKey().getPriority() > highestPriority && entry.getValue()) {
 				highestPriority = entry.getKey().getPriority();
 				riskLevel = entry.getKey().getName();
@@ -102,93 +70,83 @@ public class TeleRuleEngineService {
 		return riskLevel;
 	}
 
-	public TelemetryData processTelemetryData(TelemetryData telemetryData)
-			throws IllegalAccessException, InvocationTargetException {
-
-		List<FluxTable> historicTeleDataResult = queryData(telemetryData.getBatteryId()); // get Historic data based on
-																							// the batteryId
-
-		influxDBService.writeData(telemetryData);
-		influxDBService.writeFaultAlert("", "", "", "", 1);
-
-		if (historicTeleDataResult.size() == 0) { // If Historic data is not available then calculate risk for received
-			// telemetry data
-			// Create the facts
-			Facts telemetryFact = createTelemetryFact(telemetryData);
-			// Evaluate fact
-			Map<Rule, Boolean> riskData = evaluateFact(telemetryFact);
-			// Get Risk classifier
-			String riskClassifier = getRiskClassifier(riskData);
-
-			telemetryData.setRiskLevel(riskClassifier);
-			System.err.println("Risk Level " + riskClassifier);
-		} else {
-
-			List<TelemetryData> historicList = new LinkedList<>();
-			// Process the FluxTable results
-			for (FluxTable table : historicTeleDataResult) {
-
-				for (FluxRecord record : table.getRecords()) {
-
-					TelemetryData historicTeleData = new TelemetryData();
-					// Copy fluxRecord to historicTeleData object
-					BeanUtils.populate(historicTeleData, record.getValues());
-
-					historicList.add(historicTeleData);
-
-				}
-			}
-			int endIndex = historicList.size();
-			historicList.add(endIndex, telemetryData);
-			evaluateRisk(historicList);
-		}
-		return telemetryData;
-	}
-
-	void evaluateRisk(List<TelemetryData> historicTeleData) {
-		List<TelemetryData> historicTeleDataResult = new ArrayList<>();
+	// Evaluate risk and generate RuleContext
+	public RuleContext evaluateRisk(List<TelemetryData> telemetryDataList) {
+		RuleContext ruleContext = new RuleContext();
 		try {
 			RulesEngine rulesEngine = new DefaultRulesEngine();
-			int lastIndex = historicTeleData.size()-1;
-					RuleContext ruleContext = new RuleContext();
-					ruleContext.setVehicleId(historicTeleData.get(lastIndex).getVehicleId());
-					ruleContext.setBatterId(historicTeleData.get(lastIndex).getBatteryId());
- 
-										
-					ChargingTimeRule chargingTimeRule = new ChargingTimeRule(historicTeleData, ruleContext);
-					CurrentDeviationRule currentDeviationRule = new CurrentDeviationRule(historicTeleDataResult, ruleContext);
-					CycleCountRule cycleCountRule = new CycleCountRule( historicTeleDataResult,
-							ruleContext);
-					EnergyThroughputRule energyThroughputRule = new EnergyThroughputRule(historicTeleDataResult, ruleContext);
-					SOCDeviationRule socDeviationRule = new SOCDeviationRule(historicTeleDataResult, ruleContext);
-					SOHDeviationRule sohDeviationRule = new SOHDeviationRule(historicTeleDataResult, ruleContext);
-					TemperatureSpikeRule temperatureSpikeRule = new TemperatureSpikeRule( historicTeleDataResult,
-							ruleContext);
-					VoltageDeviationRule voltageDropRule = new VoltageDeviationRule(historicTeleData, ruleContext);
+			int lastIndex = telemetryDataList.size() - 1;
+			ruleContext.setVehicleId(telemetryDataList.get(lastIndex).getVehicleId());
+			ruleContext.setBatterId(telemetryDataList.get(lastIndex).getBatteryId());
 
-					
-					RiskClassificationRule riskClassificationRule = new RiskClassificationRule(ruleContext);
+			// Define the rules
+			ChargingTimeRule chargingTimeRule = new ChargingTimeRule(telemetryDataList, ruleContext);
+			CurrentDeviationRule currentDeviationRule = new CurrentDeviationRule(telemetryDataList, ruleContext);
+			CycleCountRule cycleCountRule = new CycleCountRule(telemetryDataList, ruleContext);
+			EnergyThroughputRule energyThroughputRule = new EnergyThroughputRule(telemetryDataList, ruleContext);
+			SOCDeviationRule socDeviationRule = new SOCDeviationRule(telemetryDataList, ruleContext);
+			SOHDeviationRule sohDeviationRule = new SOHDeviationRule(telemetryDataList, ruleContext);
+			TemperatureSpikeRule temperatureSpikeRule = new TemperatureSpikeRule(telemetryDataList, ruleContext);
+			VoltageDeviationRule voltageDropRule = new VoltageDeviationRule(telemetryDataList, ruleContext);
+			RiskClassificationRule riskClassificationRule = new RiskClassificationRule(ruleContext);
 
-					Rules rules = new Rules();
-					rules.register(chargingTimeRule);
-					rules.register(currentDeviationRule);
-					rules.register(cycleCountRule);
-					rules.register(energyThroughputRule);
-					rules.register(socDeviationRule);
-					rules.register(sohDeviationRule);
-					rules.register(temperatureSpikeRule);
-					rules.register(voltageDropRule);
-					rules.register(riskClassificationRule);
+			Rules rules = new Rules();
+			rules.register(chargingTimeRule);
+			rules.register(currentDeviationRule);
+			rules.register(cycleCountRule);
+			rules.register(energyThroughputRule);
+			rules.register(socDeviationRule);
+			rules.register(sohDeviationRule);
+			rules.register(temperatureSpikeRule);
+			rules.register(voltageDropRule);
+			rules.register(riskClassificationRule);
 
-					// Execute rules
-					rulesEngine.fire(rules, new Facts());
-					
-					System.out.println("Risk Level:        " + ruleContext);
-					System.out.println("********************************************");
+			rulesEngine.fire(rules, new Facts());
 
-		}catch(Exception e){
+			System.out.println("Risk Level: " + ruleContext);
+			System.out.println("********************************************");
+
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		return ruleContext;
+	}
+
+	// Process telemetry data and return RuleContext
+	public RuleContext processTelemetryData(List<TelemetryData> telemetryDataList) throws IllegalAccessException, InvocationTargetException {
+		Facts telemetryFacts = createTelemetryFacts(telemetryDataList);
+		Map<Rule, Boolean> riskData = evaluateFacts(telemetryFacts);
+		String riskClassifier = getRiskClassifier(riskData);
+
+		RuleContext ruleContext = evaluateRisk(telemetryDataList);
+		ruleContext.setRiskReason("Risk: " + riskClassifier);
+
+		return ruleContext;
+	}
+
+
+	// Process single telemetry data
+	// Process single telemetry data
+	public RuleContext processSingleTelemetryData(TelemetryData telemetryData) {
+		Facts facts = new Facts();
+		facts.put("vehicleId", telemetryData.getVehicleId());
+		facts.put("voltage", telemetryData.getVoltage());
+		facts.put("temperature", telemetryData.getTemperature());
+		facts.put("internalResistance", telemetryData.getInternalResistance());
+
+		Map<Rule, Boolean> riskData = evaluateFacts(facts);
+		String riskClassifier = getRiskClassifier(riskData);
+
+		RuleContext ruleContext = new RuleContext();
+		ruleContext.setVehicleId(telemetryData.getVehicleId());
+		ruleContext.setRiskReason("Risk: " + riskClassifier);
+
+		ruleContext.setBatterId(telemetryData.getBatteryId());
+		ruleContext.setRiskLevel(riskClassifier);
+		ruleContext.setVehicleId(telemetryData.getVehicleId());
+
+
+		return ruleContext;
 	}
 
 }
