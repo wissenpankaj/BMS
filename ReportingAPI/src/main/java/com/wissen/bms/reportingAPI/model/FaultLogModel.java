@@ -1,7 +1,6 @@
 package com.wissen.bms.reportingAPI.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import java.sql.Timestamp;
 
