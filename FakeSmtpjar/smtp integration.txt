@@ -1,0 +1,1 @@
+java -jar fakeSMTP-2.0.jar --port 1025 --output-dir /C:\Users\User\Downloads\email
