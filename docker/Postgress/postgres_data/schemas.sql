@@ -5,6 +5,12 @@ CREATE TABLE Station (
     location VARCHAR(255) NOT NULL
 );
 
+-- Table for Location
+CREATE TABLE Location (
+    locationId INT PRIMARY KEY,
+    locationName VARCHAR(255) NOT NULL,
+    address VARCHAR(255) NOT NULL
+);
 
 -- Table for Battery
 CREATE TABLE Battery (
@@ -19,11 +25,12 @@ CREATE TABLE Battery (
     FOREIGN KEY (locationId) REFERENCES Station(stationId)
 );
 
--- Table for Location
-CREATE TABLE Location (
-    locationId INT PRIMARY KEY,
-    locationName VARCHAR(255) NOT NULL,
-    address VARCHAR(255) NOT NULL
+-- Table for Supplier
+CREATE TABLE Supplier (
+    supplierId INT PRIMARY KEY,
+    supplierName VARCHAR(255) NOT NULL,
+    contactDetails VARCHAR(255),
+    address VARCHAR(255)
 );
 
 -- Table for StockManagement
@@ -38,14 +45,6 @@ CREATE TABLE StockManagement (
     FOREIGN KEY (supplierId) REFERENCES Supplier(supplierId)
 );
 
--- Table for Supplier
-CREATE TABLE Supplier (
-    supplierId INT PRIMARY KEY,
-    supplierName VARCHAR(255) NOT NULL,
-    contactDetails VARCHAR(255),
-    address VARCHAR(255)
-);
-
 -- Table for ServiceLog
 CREATE TABLE ServiceLog (
     serviceLogId INT PRIMARY KEY,
@@ -56,6 +55,14 @@ CREATE TABLE ServiceLog (
     FOREIGN KEY (batteryId) REFERENCES Battery(batteryId)
 );
 
+-- Table for Customer
+CREATE TABLE Customer (
+    customerId INT PRIMARY KEY,
+    customerName VARCHAR(255) NOT NULL,
+    email VARCHAR(255),
+    phone VARCHAR(50),
+    address VARCHAR(255)
+);
 
 -- Table for SalesOrder
 CREATE TABLE SalesOrder (
@@ -77,13 +84,12 @@ CREATE TABLE SalesOrderDetails (
     FOREIGN KEY (batteryId) REFERENCES Battery(batteryId)
 );
 
--- Table for Customer
-CREATE TABLE Customer (
-    customerId INT PRIMARY KEY,
-    customerName VARCHAR(255) NOT NULL,
-    email VARCHAR(255),
-    phone VARCHAR(50),
-    address VARCHAR(255)
+-- Table for ServiceStation
+CREATE TABLE ServiceStation (
+    serviceStationId INT PRIMARY KEY,
+    serviceStationName VARCHAR(255) NOT NULL,
+    address VARCHAR(255),
+    contactDetails VARCHAR(255)
 );
 
 -- Table for Transaction
@@ -127,21 +133,13 @@ CREATE TABLE FaultLog (
     FOREIGN KEY (serviceStationId) REFERENCES ServiceStation(serviceStationId)
 );
 
--- Table for ServiceStation
-CREATE TABLE ServiceStation (
-    serviceStationId INT PRIMARY KEY,
-    serviceStationName VARCHAR(255) NOT NULL,
-    address VARCHAR(255),
-    contactDetails VARCHAR(255)
-);
-
 -- Table for User
 CREATE TABLE Users (
     userId INT PRIMARY KEY,
     username VARCHAR(50) NOT NULL,
     password VARCHAR(255) NOT NULL,
     role VARCHAR(50) -- e.g., Admin, Customer
-);n
+);
 
 -- Table for UserToken
 CREATE TABLE UserToken (
