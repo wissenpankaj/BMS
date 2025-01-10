@@ -5,7 +5,7 @@ services:
     container_name: my-postgres
     environment:
       POSTGRES_PASSWORD: Postgres2025  # Replace with your desired password
-      POSTGRES_DB: batter_inventory   # Replace with the database you want
+      POSTGRES_DB: battery_inventory   # Replace with the database you want
     ports:
       - "5433:5432"  # Expose PostgreSQL port
     volumes:

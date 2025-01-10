@@ -28,13 +28,13 @@ public class FaultLogController {
     }
 
     @GetMapping("/{faultId}")
-    public ResponseEntity<FaultLogModel> getFaultLogByFaultId(@Valid @PathVariable Integer faultId) {
+    public ResponseEntity<FaultLogModel> getFaultLogByFaultId(@Valid @PathVariable String faultId) {
         FaultLogModel faultLog = faultLogService.getFaultLogByFaultId(faultId);
         return faultLog != null ? ResponseEntity.ok(faultLog) : ResponseEntity.notFound().build();
     }
 
     @GetMapping("/battery/{batteryId}")
-    public ResponseEntity<List<FaultLogModel>> getFaultLogsByBatteryId(@Valid @PathVariable Integer batteryId) {
+    public ResponseEntity<List<FaultLogModel>> getFaultLogsByBatteryId(@Valid @PathVariable String batteryId) {
         List<FaultLogModel> faultLogs = faultLogService.getFaultLogsByBatteryId(batteryId);
         return ResponseEntity.ok(faultLogs);
     }

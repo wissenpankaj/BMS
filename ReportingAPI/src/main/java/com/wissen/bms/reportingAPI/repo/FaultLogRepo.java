@@ -4,17 +4,15 @@ import com.wissen.bms.reportingAPI.model.FaultLogModel;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.sql.Timestamp;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
-public interface FaultLogRepo extends JpaRepository<FaultLogModel, Integer> {
+public interface FaultLogRepo extends JpaRepository<FaultLogModel, String> {
 
-    List<FaultLogModel> findByBatteryid(Integer batteryid);
+    List<FaultLogModel> findByBatteryId(String batteryId);
 
-    List<FaultLogModel> findByFaulttype(String faulttype);
+    List<FaultLogModel> findByFaultType(String faultType);
 
-    List<FaultLogModel> findByCreatedatBetween(LocalDateTime startDate, LocalDateTime endDate);
+    List<FaultLogModel> findByCreatedAtBetween(LocalDateTime startDate, LocalDateTime endDate);
 }
