@@ -27,9 +27,7 @@ public class KafkaConsumer {
 	@Autowired
 	private UserSubscriptionRepository userSubscriptionRepository;
 	
-	@Autowired
-	private UserSubscription Usersubscription;
-
+	
 	// Define the Kafka topic name
 	private static final String TOPIC_NAME = "faultalert";
 
@@ -46,13 +44,15 @@ public class KafkaConsumer {
 
 			String recipientEmail = "abcd@gmail.com";    // Replace with actual emailaddress
             
-			Usersubscription.setVehicleId(vehicleData.getVehicleId());
-			Usersubscription.setEmail_Id(recipientEmail);
-			Usersubscription.setToken("abcdef");
-			Usersubscription.setNotificationType("EMAIL");
+			UserSubscription usersubscription=new UserSubscription();
+			
+			usersubscription.setVehicleId(vehicleData.getVehicleId());
+			usersubscription.setEmail_Id(recipientEmail);
+			usersubscription.setToken("abcdef");
+			usersubscription.setNotificationType("EMAIL");
 			
 			
-			userSubscriptionRepository.save(Usersubscription);
+			userSubscriptionRepository.save(usersubscription);
 			
 			// Send email
 			//emailService.sendEmail(recipientEmail, subject, body);
