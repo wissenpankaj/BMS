@@ -20,7 +20,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - name: checkout 
+      uses: actions/checkout@v4
+      with:
+          ref: ${{ github.ref }} # This ensures the branch or tag that triggered the workflow is checked out
+          fetch-depth: 0 #
+    - name: Display the branch
+      run: echo "Checked out branch ${{ github.ref_name }}"
+   
+    
     - name: Set up JDK 17
       uses: actions/setup-java@v4
       with:
