@@ -6,26 +6,28 @@ import java.sql.Timestamp;
 
 @Data
 @Entity
-@Table(name = "faultlog")
+@Table(name = "fault_log")
 public class FaultLogModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer faultid;
+    private String faultId;
 
     @Column(nullable = false)
-    private Timestamp createdat = new Timestamp(System.currentTimeMillis());
+    private Timestamp createdAt = new Timestamp(System.currentTimeMillis());
 
-    private Integer createdby;
+    private String createdBy;
 
-    private Integer batteryid;
+    private String vehicleId;
+
+    private String batteryId;
 
     @Column(nullable = false)
-    private Integer servicestationid;
+    private String serviceStationId;
 
     private String description;
 
     @Column(length = 255)
-    private String faulttype;
+    private String faultType;
 
 }

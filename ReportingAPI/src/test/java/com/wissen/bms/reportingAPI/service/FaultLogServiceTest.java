@@ -1,146 +1,180 @@
 package com.wissen.bms.reportingAPI.service;
 
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
-
 import com.wissen.bms.reportingAPI.model.FaultLogModel;
 import com.wissen.bms.reportingAPI.repo.FaultLogRepo;
 import com.wissen.bms.reportingAPI.service.impl.FaultLogServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.*;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-public class FaultLogServiceTest {
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+@ActiveProfiles("test")
+class FaultLogServiceTest {
 
     @Mock
-    private FaultLogRepo faultLogRepo;
+    private FaultLogRepo faultLogRepo;  // Mock the FaultLogRepo
 
     @InjectMocks
-    private FaultLogServiceImpl faultLogService;
+    private FaultLogServiceImpl faultLogServiceImpl;  // Service being tested
+
+    private FaultLogModel faultLog1;
+    private FaultLogModel faultLog2;
 
     @BeforeEach
-    public void setup() {
+    void setUp() {
+        // Initialize mocks and prepare the objects for the tests
         MockitoAnnotations.openMocks(this);
+
+        faultLog1 = new FaultLogModel();
+        faultLog1.setFaultId("1");
+        faultLog1.setBatteryId("battery1");
+        faultLog1.setCreatedAt(Timestamp.valueOf(LocalDateTime.now()));
+        faultLog1.setFaultType("BatteryFault");
+        faultLog1.setDescription("Fault in battery");
+
+        faultLog2 = new FaultLogModel();
+        faultLog2.setFaultId("2");
+        faultLog2.setBatteryId("battery2");
+        faultLog2.setCreatedAt(Timestamp.valueOf(LocalDateTime.now()));
+        faultLog2.setFaultType("ChargingFault");
+        faultLog2.setDescription("Charging issue");
     }
 
     @Test
-    public void testGetAllFaultLogs() {
-        Timestamp timestamp = Timestamp.valueOf(LocalDateTime.now());
-        FaultLogModel faultLog1 = new FaultLogModel();
-        faultLog1.setFaultid(1);
-        faultLog1.setCreatedat(timestamp);
-        faultLog1.setBatteryid(123);
-        faultLog1.setServicestationid(1);
-        faultLog1.setFaulttype("Type1");
-
-        FaultLogModel faultLog2 = new FaultLogModel();
-        faultLog2.setFaultid(2);
-        faultLog2.setCreatedat(timestamp);
-        faultLog2.setBatteryid(124);
-        faultLog2.setServicestationid(1);
-        faultLog2.setFaulttype("Type2");
-
+    void testGetAllFaultLogs() {
+        // Arrange: mock the repo to return a list of fault logs
         when(faultLogRepo.findAll()).thenReturn(Arrays.asList(faultLog1, faultLog2));
 
-        List<FaultLogModel> result = faultLogService.getAllFaultLogs();
+        // Act: call the service method
+        List<FaultLogModel> faultLogs = faultLogServiceImpl.getAllFaultLogs();
 
-        assertNotNull(result);
-        assertEquals(2, result.size());
+        // Assert: verify the result
+        assertNotNull(faultLogs);
+        assertEquals(2, faultLogs.size());
         verify(faultLogRepo, times(1)).findAll();
     }
 
     @Test
-    public void testGetFaultLogByFaultId() {
-        Timestamp timestamp = Timestamp.valueOf(LocalDateTime.now());
-        FaultLogModel faultLog = new FaultLogModel();
-        faultLog.setFaultid(1);
-        faultLog.setCreatedat(timestamp);
-        faultLog.setBatteryid(123);
-        faultLog.setServicestationid(1);
-        faultLog.setFaulttype("Type1");
+    void testGetFaultLogByFaultId() {
+        // Arrange: mock the repo to return a specific fault log
+        when(faultLogRepo.findById("1")).thenReturn(Optional.of(faultLog1));
 
-        when(faultLogRepo.findById(1)).thenReturn(Optional.of(faultLog));
+        // Act: call the service method
+        FaultLogModel faultLog = faultLogServiceImpl.getFaultLogByFaultId("1");
 
-        FaultLogModel result = faultLogService.getFaultLogByFaultId(1);
-
-        assertNotNull(result);
-        assertEquals(1, result.getFaultid());
-        verify(faultLogRepo, times(1)).findById(1);
+        // Assert: verify the result
+        assertNotNull(faultLog);
+        assertEquals("1", faultLog.getFaultId());
+        verify(faultLogRepo, times(1)).findById("1");
     }
 
     @Test
-    public void testGetFaultLogByFaultId_NotFound() {
-        when(faultLogRepo.findById(1)).thenReturn(Optional.empty());
+    void testGetFaultLogByFaultId_NotFound() {
+        // Arrange: mock the repo to return empty
+        when(faultLogRepo.findById("999")).thenReturn(Optional.empty());
 
-        FaultLogModel result = faultLogService.getFaultLogByFaultId(1);
+        // Act: call the service method
+        FaultLogModel faultLog = faultLogServiceImpl.getFaultLogByFaultId("999");
 
-        assertNull(result);
-        verify(faultLogRepo, times(1)).findById(1);
+        // Assert: verify the result
+        assertNull(faultLog);
+        verify(faultLogRepo, times(1)).findById("999");
     }
+
     @Test
-    public void testGetFaultLogsByBatteryId() {
-        Timestamp timestamp = Timestamp.valueOf(LocalDateTime.now());
-        FaultLogModel faultLog = new FaultLogModel();
-        faultLog.setFaultid(1);
-        faultLog.setCreatedat(timestamp);
-        faultLog.setBatteryid(123);
-        faultLog.setServicestationid(1);
-        faultLog.setFaulttype("Type1");
+    void testGetFaultLogsByBatteryId() {
+        // Arrange: mock the repo to return fault logs for a specific battery
+        when(faultLogRepo.findByBatteryId("battery1")).thenReturn(Collections.singletonList(faultLog1));
 
-        when(faultLogRepo.findByBatteryid(123)).thenReturn(List.of(faultLog));
+        // Act: call the service method
+        List<FaultLogModel> faultLogs = faultLogServiceImpl.getFaultLogsByBatteryId("battery1");
 
-        List<FaultLogModel> result = faultLogService.getFaultLogsByBatteryId(123);
-
-        assertNotNull(result);
-        assertEquals(1, result.size());
-        verify(faultLogRepo, times(1)).findByBatteryid(123);
+        // Assert: verify the result
+        assertNotNull(faultLogs);
+        assertEquals(1, faultLogs.size());
+        assertEquals("battery1", faultLogs.get(0).getBatteryId());
+        verify(faultLogRepo, times(1)).findByBatteryId("battery1");
     }
+
+    /*@Test
+    void testGetFaultLogsByCreatedAt() {
+        // Arrange: Set the expected date range and create a fault log with createdAt matching the range.
+        LocalDateTime date = LocalDateTime.of(2025, 1, 10, 10, 0, 0, 0);  // Set a date within the rang
+
+        // Create the start and end of the day for January 10th, 2025
+        LocalDateTime startOfDay = LocalDateTime.of(2025, 1, 10, 0, 0, 0, 0);
+        LocalDateTime endOfDay = LocalDateTime.of(2025, 1, 10, 23, 59, 59, 999000000);
+
+        System.out.println("startOfDay: " + startOfDay);
+        System.out.println("endOfDay: " + endOfDay);
+
+        faultLog1.setCreatedAt(Timestamp.valueOf(date));  // Set the mock faultLog1's createdAt
+
+        // Mock the repo to return faultLog1 when findByCreatedAtBetween is called
+        when(faultLogRepo.findByCreatedAtBetween(startOfDay, endOfDay)).thenReturn(Arrays.asList(faultLog1));
+
+        faultLog1.setCreatedAt(Timestamp.valueOf(date));  // Confirm this date is being set properly
+
+        // Act: Call the service method with the test date
+        List<FaultLogModel> faultLogs = faultLogServiceImpl.getFaultLogsByCreatedAt("2025-01-10");
+
+        // Print the result to check what was returned
+        System.out.println("Returned Fault Logs: " + faultLogs.size());
+        faultLogs.forEach(f -> System.out.println("Fault Log createdAt: " + f.getCreatedAt()));
+
+        // Assert: Verify that the returned list contains the expected fault log
+        assertNotNull(faultLogs);
+        assertEquals(1, faultLogs.size());  // This should pass if everything is correct
+        assertEquals("2025-01-10", faultLogs.get(0).getCreatedAt().toLocalDateTime().toString());  // Verify the date
+
+        // Verify the repository call
+        verify(faultLogRepo, times(1)).findByCreatedAtBetween(startOfDay, endOfDay);
+    }
+*/
     @Test
     public void testGetFaultLogsByCreatedAt() {
         Timestamp timestamp = Timestamp.valueOf(LocalDateTime.now());
         FaultLogModel faultLog = new FaultLogModel();
-        faultLog.setFaultid(1);
-        faultLog.setCreatedat(timestamp);
-        faultLog.setBatteryid(123);
-        faultLog.setServicestationid(1);
-        faultLog.setFaulttype("Type1");
-
+        faultLog.setFaultId("1");
+        faultLog.setCreatedAt(timestamp);
+        faultLog.setBatteryId("123");
+        faultLog.setServiceStationId("1");
+        faultLog.setFaultType("Type1");
         String date = "2025-01-09";
         LocalDateTime startOfDay = LocalDate.parse(date).atStartOfDay();
         LocalDateTime endOfDay = LocalDate.parse(date).atTime(23, 59, 59);
-
-        when(faultLogRepo.findByCreatedatBetween(startOfDay, endOfDay)).thenReturn(List.of(faultLog));
-
-        List<FaultLogModel> result = faultLogService.getFaultLogsByCreatedAt(date);
-
+        when(faultLogRepo.findByCreatedAtBetween(startOfDay, endOfDay)).thenReturn(List.of(faultLog));
+        List<FaultLogModel> result = faultLogServiceImpl.getFaultLogsByCreatedAt(date);
         assertNotNull(result);
         assertEquals(1, result.size());
-        verify(faultLogRepo, times(1)).findByCreatedatBetween(startOfDay, endOfDay);
+        verify(faultLogRepo, times(1)).findByCreatedAtBetween(startOfDay, endOfDay);
     }
+
     @Test
-    public void testGetFaultLogsByFaultType() {
-        Timestamp timestamp = Timestamp.valueOf(LocalDateTime.now());
-        FaultLogModel faultLog = new FaultLogModel();
-        faultLog.setFaultid(1);
-        faultLog.setCreatedat(timestamp);
-        faultLog.setBatteryid(123);
-        faultLog.setServicestationid(1);
-        faultLog.setFaulttype("Type1");
+    void testGetFaultLogsByFaultType() {
+        // Arrange: mock the repo to return fault logs for a specific fault type
+        when(faultLogRepo.findByFaultType("BatteryFault")).thenReturn(Collections.singletonList(faultLog1));
 
-        when(faultLogRepo.findByFaulttype("Type1")).thenReturn(List.of(faultLog));
+        // Act: call the service method
+        List<FaultLogModel> faultLogs = faultLogServiceImpl.getFaultLogsByFaultType("BatteryFault");
 
-        List<FaultLogModel> result = faultLogService.getFaultLogsByFaultType("Type1");
-
-        assertNotNull(result);
-        assertEquals(1, result.size());
-        verify(faultLogRepo, times(1)).findByFaulttype("Type1");
+        // Assert: verify the result
+        assertNotNull(faultLogs);
+        assertEquals(1, faultLogs.size());
+        assertEquals("BatteryFault", faultLogs.get(0).getFaultType());
+        verify(faultLogRepo, times(1)).findByFaultType("BatteryFault");
     }
-
 }
