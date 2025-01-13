@@ -129,6 +129,21 @@ CREATE TABLE service_history (
     FOREIGN KEY (service_station_id) REFERENCES service_station(service_station_id)
 );
 
+--Table for Battery_Fault
+CREATE TABLE battery_fault (
+    battery_fault_id VARCHAR(50) PRIMARY KEY,
+    vehicle_id VARCHAR(50),
+    battery_id VARCHAR(50),
+    gps VARCHAR(50),
+    fault_reason VARCHAR(50),
+    recommendation VARCHAR(50),
+    risk_level VARCHAR(50),
+    risk VARCHAR(50),
+    fault_time TIMESTAMP,
+    FOREIGN KEY (battery_id) REFERENCES battery(battery_id),
+    FOREIGN KEY (vehicle_id) REFERENCES vehicle(vehicle_id)
+);
+
 -- Table for fault_log
 CREATE TABLE fault_log (
     fault_id VARCHAR(50) PRIMARY KEY,
