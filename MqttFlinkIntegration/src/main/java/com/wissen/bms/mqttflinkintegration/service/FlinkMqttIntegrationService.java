@@ -70,16 +70,19 @@ public class FlinkMqttIntegrationService {
         process.map(EVUtil::deserializeBatteryFault).addSink(new InfluxDBBatteryFaulSink());
 
 
-        telemetryStream
+        SingleOutputStreamOperator<String> Batchprocess = telemetryStream
                 .map(EVUtil::deserializeTelemetryData)  // Convert String to TelemetryData
                 .assignTimestampsAndWatermarks(
-                        WatermarkStrategy.<TelemetryData>forBoundedOutOfOrderness(Duration.ofSeconds(5)) // Handle late data with 5 second delay
+                        WatermarkStrategy.<TelemetryData>forBoundedOutOfOrderness(Duration.ofSeconds(30)) // Handle late data with 30 second delay
                                 .withTimestampAssigner((event, timestamp) -> event.getTimeStamp()) // Use event timestamp for windowing
                 )
                 .keyBy(TelemetryData::getBatteryId) // Group data by Battery ID
-                .timeWindow(Time.minutes(5)) // Create a 10-second tumbling window
-                .apply(new BatchProcessor(teleRuleEngineService))
-                .addSink(kafkaProducer); // Process data within each 10-second window
+                .timeWindow(Time.minutes(5)) // Create a 5-minutes tumbling window
+                .apply(new BatchProcessor(teleRuleEngineService));
+
+        Batchprocess.addSink(kafkaProducer);
+        Batchprocess.map(EVUtil::deserializeBatteryFault).addSink(new InfluxDBBatteryFaulSink());
+
 
         log.info("Inside @class FlinkMqttIntegrationService @method process on execute");
         // Execute the Flink job

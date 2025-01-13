@@ -55,6 +55,21 @@ public class EmailNotificationService implements NotificationService {
         }
     }
 
+    public void sendHtmlEmail(String toEmail, String subject, String body) {
+        try {
+            MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+            MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true);
+
+            messageHelper.setTo(toEmail);
+            messageHelper.setSubject(subject);
+            messageHelper.setText(body, true);  // true means the body is HTML
+
+            javaMailSender.send(mimeMessage);
+            System.out.println("HTML email sent successfully to " + toEmail);
+        } catch (Exception e) {
+            System.err.println("Failed to send HTML email: " + e.getMessage());
+        }
+    }
     // Helper method to build the HTML email body
     private String buildHtmlBody(BatteryFault data) {
         return String.format(
