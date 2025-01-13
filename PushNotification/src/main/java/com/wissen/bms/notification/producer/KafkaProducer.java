@@ -2,7 +2,6 @@ package com.wissen.bms.notification.producer;
 
 
 import com.wissen.bms.common.model.BatteryFault;
-import com.wissen.bms.notification.model.BatteryFault1;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.Scheduled;

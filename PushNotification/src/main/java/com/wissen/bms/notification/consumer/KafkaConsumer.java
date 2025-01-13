@@ -3,7 +3,6 @@ package com.wissen.bms.notification.consumer;
 import java.util.Optional;
 
 import com.wissen.bms.common.model.BatteryFault;
-import com.wissen.bms.notification.model.BatteryFault1;
 import com.wissen.bms.notification.service.NotificationService;
 import com.wissen.bms.notification.factory.NotificationServiceFactory;
 import com.wissen.bms.notification.repository.UserSubscriptionRepository;
