@@ -6,6 +6,7 @@ import com.eatthepath.pushy.apns.auth.ApnsSigningKey;
 import com.eatthepath.pushy.apns.util.SimpleApnsPushNotification;
 import com.wissen.bms.common.model.BatteryFault;
 import com.wissen.bms.notification.entity.UserSubscription;
+import com.wissen.bms.notification.model.BatteryFault1;
 import com.wissen.bms.notification.model.NotificationResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -37,11 +38,16 @@ public class iOSPushNotificationService implements NotificationService {
 	}
 
 	@Override
-	public ResponseEntity<NotificationResponse> sendNotification(BatteryFault data, Optional<UserSubscription> subscription, Optional<String> deviceToken) {
+	public ResponseEntity<NotificationResponse> sendNotification(BatteryFault data, Optional<UserSubscription> subscription) {
 		if (mockMode) {
-			return sendMockNotification(deviceToken.orElse("unknown_device"), data);
+			return sendMockNotification(data);
 		} else {
-			return sendRealNotification(deviceToken.orElse(""), data);
+			if(subscription.isPresent()){
+				Optional<String> deviceToken = Optional.of(subscription.get().getToken());
+				return sendRealNotification(deviceToken.orElse(""), data);
+			}
+			return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
+					.body(new NotificationResponse("error", "User subscription is not available."));
 		}
 	}
 
@@ -75,7 +81,7 @@ public class iOSPushNotificationService implements NotificationService {
 		}
 	}
 
-	private ResponseEntity<NotificationResponse> sendMockNotification(String deviceToken, BatteryFault data) {
+	private ResponseEntity<NotificationResponse> sendMockNotification(BatteryFault data) {
 		try {
 			// Build mock response data
 			String mockData = String.format("Mock notification for Vehicle: %s, Battery: %s, GPS: %s",
