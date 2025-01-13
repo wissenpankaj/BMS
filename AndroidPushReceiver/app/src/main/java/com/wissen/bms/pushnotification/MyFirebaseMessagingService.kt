@@ -44,15 +44,16 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         // Extract data from the FCM payload
         val title = remoteMessage.notification?.title ?: "Battery Alert"
         val body = remoteMessage.notification?.body ?: "Check battery status!"
+        val batteryId = remoteMessage.data["batteryId"]
         val risk = remoteMessage.data["risk"]
         val faultReason = remoteMessage.data["faultReason"]
         val recommendation = remoteMessage.data["recommendation"]
 
         // Show the notification
-        showNotification(title, body, risk, faultReason, recommendation)
+        showNotification(title, body, batteryId, risk, faultReason, recommendation)
     }
 
-    private fun showNotification(title: String, body: String, risk: String?, faultReason: String?, recommendation: String?) {
+    private fun showNotification(title: String, body: String, batteryId: String?, risk: String?, faultReason: String?, recommendation: String?) {
         createNotificationChannel()
 
         // Prepare intent to open activity on notification click
@@ -63,6 +64,11 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         // Format risk, faultReason in red and recommendation in green
         val styledText = SpannableStringBuilder()
+
+        batteryId?.let {
+            val batteryIdText = "Battery Id: $it\n"
+            styledText.append(batteryIdText).setSpan(ForegroundColorSpan(Color.RED), 0, batteryIdText.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        }
 
         risk?.let {
             val riskText = "Risk: $it\n"
