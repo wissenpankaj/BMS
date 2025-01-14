@@ -73,7 +73,6 @@ services:
       - kafka-net
       - my_network
 
-
   postgres:
     image: postgres:latest
     hostname: my-postgres
@@ -89,7 +88,20 @@ services:
       - ./postgress/postgres_data:/docker-entrypoint-initdb.d/
     networks:
       - my_network
-  app:
+  push-notification:
+    image: pushnotification-api:latest
+    build:
+      context: ..\PushNotification
+      dockerfile: Dockerfile
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://my-postgres:5432/battery_inventory
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: Postgres2025
+    ports:
+      - "8081:8080"
+    networks:
+      - my_network
+  reporting-api:
     image: reporting-api:latest
     build:
       context: ..\ReportingAPI
