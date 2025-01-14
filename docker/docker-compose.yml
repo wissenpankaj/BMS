@@ -68,7 +68,7 @@ services:
       - kafka-broker-1
     entrypoint: ["/bin/bash", "-c", "/create-topics.sh"]
     volumes:
-      - ./create-topics.sh:/create-topics.sh
+      - ./kafka/create-topics.sh:/create-topics.sh
     networks:
       - kafka-net
       - my_network
