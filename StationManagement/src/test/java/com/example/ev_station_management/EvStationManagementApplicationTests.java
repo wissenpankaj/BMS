@@ -1,11 +1,10 @@
-package com.wissen.bms.reportingAPI;
+package com.example.ev_station_management;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
-class BatterManagementApplicationTests {
+class EvStationManagementApplicationTests {
 
 	@Test
 	void contextLoads() {
