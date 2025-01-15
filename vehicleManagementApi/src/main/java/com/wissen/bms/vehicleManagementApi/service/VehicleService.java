@@ -10,4 +10,6 @@ public interface VehicleService {
 
     // Method to get vehicles based on filter criteria
     public List<Vehicle> getVehicles(String vehicleId, String make, String model, String vehicleType, String batteryId);
+
+    public void updateVehicle(String vehicleId, String make, String model, String vehicleType, String batteryId);
 }

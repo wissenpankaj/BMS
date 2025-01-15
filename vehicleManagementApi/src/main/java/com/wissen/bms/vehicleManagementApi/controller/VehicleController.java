@@ -33,4 +33,16 @@ public class VehicleController {
         List<Vehicle> vehicles = vehicleService.getVehicles(vehicleId, make, model, vehicleType, batteryId);
         return ResponseEntity.ok(vehicles);
     }
+
+    // Endpoint to update a vehicle
+    @PatchMapping("/update")
+    public ResponseEntity<String> updateVehicle(
+            @RequestParam String vehicleId,
+            @RequestParam(required = false) String make,
+            @RequestParam(required = false) String model,
+            @RequestParam(required = false) String vehicleType,
+            @RequestParam(required = false) String batteryId) {
+        vehicleService.updateVehicle(vehicleId, make, model, vehicleType, batteryId);
+        return ResponseEntity.ok("Vehicle updated successfully");
+    }
 }
