@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.validation.annotation.Validated;
 
-@RestController
+//@RestController
 @RequestMapping("/api/faultlogs")
 @Validated
 public class FaultLogController {
