@@ -1,15 +1,14 @@
 package com.example.ev_station_management.model;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+
+import jakarta.persistence.*;
 
 @Entity
 public class Station {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "station_id") // Column name in the DB is station_id
+    private Long station_id;
 
     private String name;
     private double latitude;
@@ -18,12 +17,12 @@ public class Station {
     private int minStockLevel; // Minimum stock level for the station
 
     // Getters and Setters
-    public Long getId() {
-        return id;
+    public Long getStation_id() {
+        return station_id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setStation_id(Long station_id) {
+        this.station_id = station_id;
     }
 
     public String getName() {

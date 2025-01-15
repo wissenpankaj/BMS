@@ -1,28 +1,30 @@
 package com.example.ev_station_management.model;
+
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+
 @Entity
 public class Replenishment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private long replenishment_id; // Renamed to match the "replenishment_id"
 
     @ManyToOne
-    @JoinColumn(name = "station_id", nullable = false)
-    private Station station;
+    @JoinColumn(name = "station_id", nullable = false) // Link to the station using station_id
+    private Station station;  // Use the Station object directly to link the station
 
     private int requestedStock;
 
     private LocalDateTime createdAt = LocalDateTime.now();
 
     // Getters and Setters
-    public Long getId() {
-        return id;
+    public long getReplenishment_id() {
+        return replenishment_id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setReplenishment_id(long replenishment_id) {
+        this.replenishment_id = replenishment_id;
     }
 
     public Station getStation() {
@@ -49,4 +51,3 @@ public class Replenishment {
         this.createdAt = createdAt;
     }
 }
-
