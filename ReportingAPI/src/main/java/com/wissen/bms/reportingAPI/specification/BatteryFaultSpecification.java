@@ -6,6 +6,9 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.util.StringUtils;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,7 +51,11 @@ public class BatteryFaultSpecification {
             }
 
             if (StringUtils.hasText(time)) {
-                predicates.add(criteriaBuilder.equal(root.get("time"), Timestamp.valueOf(time)));
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                LocalDate date = LocalDate.parse(time, formatter);
+                LocalDateTime startOfDay = date.atStartOfDay();
+                LocalDateTime endOfDay = date.atTime(23, 59, 59);
+                predicates.add(criteriaBuilder.between(root.get("time"), Timestamp.valueOf(startOfDay), Timestamp.valueOf(endOfDay)));
             }
 
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));

@@ -28,9 +28,9 @@ public class BatteryFaultController {
             @RequestParam(required = false) String recommendation,
             @RequestParam(required = false) String level,
             @RequestParam(required = false) String risk,
-            @RequestParam(required = false) String time) {
+            @RequestParam(required = false) String date) {
 
-        List<BatteryFaultModel> batteryFaults = batteryFaultService.getBatteryFaults(faultId, gps, vehicleId, batteryId, faultReason, recommendation, level, risk, time);
+        List<BatteryFaultModel> batteryFaults = batteryFaultService.getBatteryFaults(faultId, gps, vehicleId, batteryId, faultReason, recommendation, level, risk, date);
         return ResponseEntity.ok(batteryFaults);
     }
 }
