@@ -1,5 +1,6 @@
 package com.wissen.bms.ruleengine.service;
 
+import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map;
@@ -18,14 +19,11 @@ import com.wissen.bms.ruleengine.rules.RiskClassificationRule;
 import com.wissen.bms.ruleengine.rules.RuleContext;
 import com.wissen.bms.ruleengine.rules.SOCDeviationRule;
 import com.wissen.bms.ruleengine.rules.SOHDeviationRule;
-import com.wissen.bms.ruleengine.rules.TelemetryCriticalRule;
-import com.wissen.bms.ruleengine.rules.TelemetryHighRiskRule;
-import com.wissen.bms.ruleengine.rules.TelemetryModerateRule;
 import com.wissen.bms.ruleengine.rules.TemperatureSpikeRule;
 import com.wissen.bms.ruleengine.rules.VoltageDeviationRule;
-
 @Service
-public class TeleRuleEngineService {
+public class TeleRuleEngineService implements Serializable {
+	private static final long serialVersionUID = 1L;
 
 	// Process the raw telemetry data and create facts
 	public Facts createTelemetryFacts(List<TelemetryData> telemetryDataList) {
@@ -38,19 +36,16 @@ public class TeleRuleEngineService {
 		}
 		return facts;
 	}
-
 	// Evaluate facts based on rules
 	public Map<Rule, Boolean> evaluateFacts(Facts telemetryFacts) {
 		RulesEngine ruleEngine = new DefaultRulesEngine();
 
-		Rule telemetryCriticalRule = new TelemetryCriticalRule();
-		Rule telemetryHighRiskRule = new TelemetryHighRiskRule();
-		Rule telemetryModerateRule = new TelemetryModerateRule();
+		// Define the composite rule
+		Rule compositeRiskRule = new CompositeRiskRule();
 
+		// Register the composite rule
 		Rules rules = new Rules();
-		rules.register(telemetryCriticalRule);
-		rules.register(telemetryHighRiskRule);
-		rules.register(telemetryModerateRule);
+		rules.register(compositeRiskRule);
 
 		return ruleEngine.check(rules, telemetryFacts);
 	}
@@ -113,34 +108,51 @@ public class TeleRuleEngineService {
 
 	// Process telemetry data and return RuleContext
 	public RuleContext processTelemetryData(List<TelemetryData> telemetryDataList) throws IllegalAccessException, InvocationTargetException {
+
 		Facts telemetryFacts = createTelemetryFacts(telemetryDataList);
+
 		Map<Rule, Boolean> riskData = evaluateFacts(telemetryFacts);
 		String riskClassifier = getRiskClassifier(riskData);
 
 		RuleContext ruleContext = evaluateRisk(telemetryDataList);
-		ruleContext.setRiskReason("Risk: " + riskClassifier);
-
+		ruleContext.setRiskLevel("Risk: " + riskClassifier);
 		return ruleContext;
 	}
 
 
 	// Process single telemetry data
+
 	public RuleContext processSingleTelemetryData(TelemetryData telemetryData) {
+		RuleContext ruleContext = new RuleContext();
 		Facts facts = new Facts();
 		facts.put("vehicleId", telemetryData.getVehicleId());
 		facts.put("voltage", telemetryData.getVoltage());
 		facts.put("temperature", telemetryData.getTemperature());
 		facts.put("internalResistance", telemetryData.getInternalResistance());
+		facts.put("ruleContext", ruleContext); // Ensure RuleContext is added
 
-		Map<Rule, Boolean> riskData = evaluateFacts(facts);
-		String riskClassifier = getRiskClassifier(riskData);
+		// Define and register composite rule
+		Rule compositeRiskRule = new CompositeRiskRule();
+		Rules rules = new Rules();
+		rules.register(compositeRiskRule);
 
-		RuleContext ruleContext = new RuleContext();
+		// Evaluate and fire rules
+		RulesEngine rulesEngine = new DefaultRulesEngine();
+		rulesEngine.fire(rules, facts);
+
+		// Ensure Vehicle ID is set
 		ruleContext.setVehicleId(telemetryData.getVehicleId());
-		ruleContext.setRiskReason("Risk: " + riskClassifier);
+		ruleContext.setBatterId(telemetryData.getBatteryId());
+
+		// Combine risk reasons for output
+		String combinedRiskReasons = String.join(" | ", ruleContext.getRiskReason());
+		System.out.println("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+		System.out.println("rule context for single object ----> " + ruleContext);
+		System.out.println("Risk Level is : " + ruleContext.getRiskLevel() +" Risk Reason is : "+ruleContext.getRiskReason());
 
 		return ruleContext;
 	}
+
 
 
 }

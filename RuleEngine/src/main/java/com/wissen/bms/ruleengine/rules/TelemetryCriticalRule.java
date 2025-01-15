@@ -29,7 +29,26 @@ public class TelemetryCriticalRule implements Rule {
 
     @Override
     public void execute(Facts facts) throws Exception {
-        System.out.println("The battery is faulty.");
+        RuleContext ruleContext = facts.get("ruleContext");
+
+        Double voltage = (Double) facts.get("voltage");
+        Double temperature = (Double) facts.get("temperature");
+        Double internalResistance = (Double) facts.get("internalResistance");
+
+        if (voltage < 320) {
+            ruleContext.addRiskReason("Voltage < 320V");
+        }
+        if (temperature > 65) {
+            ruleContext.addRiskReason("Temperature > 65°C");
+        }
+        if (internalResistance > 0.07) {
+            ruleContext.addRiskReason("Internal Resistance > 0.07Ω");
+        }
+
+        ruleContext.setRiskLevel("Critical");
+        System.out.println("The battery is faulty with reasons: " + String.join(" | ", ruleContext.getRiskReason()));
+
+
     }
 
 	@Override

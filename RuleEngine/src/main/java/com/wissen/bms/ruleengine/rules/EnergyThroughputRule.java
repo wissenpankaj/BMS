@@ -33,13 +33,15 @@ public class EnergyThroughputRule implements Rule {
 	public void execute(Facts facts) throws Exception {
 		String riskReason = "Warning: Energy Throuhput is abnormal for battery ";
 		ruleContext.setEnergyThroughputRisk(0.1); //Medium risk for Energy Through put
-		if(ruleContext.getRiskReason().equals(null) || ruleContext.getRiskReason().equals("")) {
-			ruleContext.setRiskReason(riskReason);
-		} 
-		else {
-			String prevRiskReason = ruleContext.getRiskReason();
-			ruleContext.setRiskReason(prevRiskReason+""+riskReason+" | ");
-		};
+		ruleContext.getRiskReason().add(riskReason);
+
+//		if(ruleContext.getRiskReason().equals(null) || ruleContext.getRiskReason().equals("")) {
+//			ruleContext.setRiskReason(riskReason);
+//		}
+//		else {
+//			String prevRiskReason = ruleContext.getRiskReason();
+//			ruleContext.setRiskReason(prevRiskReason+""+riskReason+" | ");
+//		};
         System.out.println("Warning: Energy Throuhput is abnormal for battery");
 	}
 	
