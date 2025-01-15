@@ -14,36 +14,23 @@ import java.util.List;
 @RequestMapping("/api/faults")
 @Validated
 public class BatteryFaultController {
+
     @Autowired
     private BatteryFaultService batteryFaultService;
 
-    @GetMapping("/all")
-    public ResponseEntity<List<BatteryFaultModel>> getAllBatteryFaults() {
-        List<BatteryFaultModel> batteryFaults = batteryFaultService.getAllBatteryFaults();
-        return ResponseEntity.ok(batteryFaults);
-    }
+    @GetMapping
+    public ResponseEntity<List<BatteryFaultModel>> getBatteryFaults(
+            @RequestParam(required = false) String faultId,
+            @RequestParam(required = false) String gps,
+            @RequestParam(required = false) String vehicleId,
+            @RequestParam(required = false) String batteryId,
+            @RequestParam(required = false) String faultReason,
+            @RequestParam(required = false) String recommendation,
+            @RequestParam(required = false) String level,
+            @RequestParam(required = false) String risk,
+            @RequestParam(required = false) String time) {
 
-    @GetMapping("/{faultId}")
-    public ResponseEntity<BatteryFaultModel> getBatteryFaultByFaultId(@Valid @PathVariable String faultId) {
-        BatteryFaultModel batteryFaults = batteryFaultService.getBatteryFaultByFaultId(faultId);
-        return batteryFaults != null ? ResponseEntity.ok(batteryFaults) : ResponseEntity.notFound().build();
-    }
-
-    @GetMapping("/battery/{batteryId}")
-    public ResponseEntity<List<BatteryFaultModel>> getBatteryFaultsByBatteryId(@Valid @PathVariable String batteryId) {
-        List<BatteryFaultModel> batteryFaults = batteryFaultService.getBatteryFaultsByBatteryId(batteryId);
-        return ResponseEntity.ok(batteryFaults);
-    }
-
-    @GetMapping("/date")
-    public ResponseEntity<List<BatteryFaultModel>> getBatteryFaultsByCreateDate(@Valid @RequestParam String createDate) {
-        List<BatteryFaultModel> batteryFaults = batteryFaultService.getBatteryFaultsByCreatedAt(createDate);
-        return ResponseEntity.ok(batteryFaults);
-    }
-
-    @GetMapping("/type")
-    public ResponseEntity<List<BatteryFaultModel>> getBatteryFaultsByFaultReason(@Valid @RequestParam String faultReason) {
-        List<BatteryFaultModel> batteryFaults = batteryFaultService.getBatteryFaultsByFaultType(faultReason);
+        List<BatteryFaultModel> batteryFaults = batteryFaultService.getBatteryFaults(faultId, gps, vehicleId, batteryId, faultReason, recommendation, level, risk, time);
         return ResponseEntity.ok(batteryFaults);
     }
 }

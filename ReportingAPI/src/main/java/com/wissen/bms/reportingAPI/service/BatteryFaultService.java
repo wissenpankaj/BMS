@@ -6,19 +6,5 @@ import com.wissen.bms.reportingAPI.model.FaultLogModel;
 import java.util.List;
 
 public interface BatteryFaultService {
-    // Method to get all fault logs
-    List<BatteryFaultModel> getAllBatteryFaults();
-
-    // Method to get fault logs by fault ID
-    BatteryFaultModel getBatteryFaultByFaultId(String faultId);
-
-    // Method to get fault logs by battery ID
-    List<BatteryFaultModel> getBatteryFaultsByBatteryId(String batteryId);
-
-    // Method to get fault logs by creation date
-    List<BatteryFaultModel> getBatteryFaultsByCreatedAt(String createDate);
-
-    // Method to get fault logs by fault type
-    List<BatteryFaultModel> getBatteryFaultsByFaultType(String faultType);
-
+    public List<BatteryFaultModel> getBatteryFaults(String faultId, String gps, String vehicleId, String batteryId, String faultReason, String recommendation, String level, String risk, String time);
 }

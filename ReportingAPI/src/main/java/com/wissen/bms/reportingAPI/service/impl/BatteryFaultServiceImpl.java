@@ -3,6 +3,7 @@ package com.wissen.bms.reportingAPI.service.impl;
 import com.wissen.bms.reportingAPI.model.BatteryFaultModel;
 import com.wissen.bms.reportingAPI.repo.BatteryFaultRepo;
 import com.wissen.bms.reportingAPI.service.BatteryFaultService;
+import com.wissen.bms.reportingAPI.specification.BatteryFaultSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,35 +20,7 @@ public class BatteryFaultServiceImpl implements BatteryFaultService {
     private BatteryFaultRepo batteryFaultRepo;
 
     @Override
-    public List<BatteryFaultModel> getAllBatteryFaults() {
-        return batteryFaultRepo.findAll();
-    }
-
-    @Override
-    public BatteryFaultModel getBatteryFaultByFaultId(String faultId) {
-        Optional<BatteryFaultModel> batteryFault = batteryFaultRepo.findById(faultId);
-        return batteryFault.orElse(null);
-    }
-
-    @Override
-    public List<BatteryFaultModel> getBatteryFaultsByBatteryId(String batteryId) {
-        Optional<List<BatteryFaultModel>> batteryFault = batteryFaultRepo.findByBatteryId(batteryId);
-        return batteryFault.orElse(null);
-    }
-
-    @Override
-    public List<BatteryFaultModel> getBatteryFaultsByCreatedAt(String time) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate date = LocalDate.parse(time, formatter);
-        LocalDateTime startOfDay = date.atStartOfDay();
-        LocalDateTime endOfDay = date.atTime(23, 59, 59);
-        Optional<List<BatteryFaultModel>> batteryFault = batteryFaultRepo.findByTimeBetween(startOfDay, endOfDay);
-        return batteryFault.orElse(null);
-    }
-
-    @Override
-    public List<BatteryFaultModel> getBatteryFaultsByFaultType(String faultReason) {
-        Optional<List<BatteryFaultModel>> batteryFault = batteryFaultRepo.findByFaultReason(faultReason);
-        return batteryFault.orElse(null);
+    public List<BatteryFaultModel> getBatteryFaults(String faultId, String gps, String vehicleId, String batteryId, String faultReason, String recommendation, String level, String risk, String time) {
+        return batteryFaultRepo.findAll(BatteryFaultSpecification.getBatteryFaults(faultId, gps, vehicleId, batteryId, faultReason, recommendation, level, risk, time));
     }
 }
