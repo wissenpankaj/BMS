@@ -2,7 +2,7 @@ package com.wissen.bms.mqttflinkintegration.service;
 
 import com.influxdb.client.InfluxDBClient;
 import com.influxdb.client.InfluxDBClientFactory;
-import com.wissen.bms.mqttflinkintegration.model.TelemetryData;
+import com.wissen.bms.common.model.TelemetryData;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.streaming.api.functions.sink.RichSinkFunction;
@@ -14,11 +14,11 @@ public class InfluxDBSink extends RichSinkFunction<TelemetryData> {
 
     private String influxDbUrl = "http://localhost:8086";
 
-    private String influxDbToken="uSrgdObyNy5FyAzbD3e_7ZZo34VW1QpVS7FkAbFGOxlKVd_bnbmnT02_caqwHEPvhB3sZeoGcorNHUKuLg9KdQ==";
+    private String influxDbToken="1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef";
 
-    private String influxDbOrg="05ba4da3f49978a1";
+    private String influxDbOrg="Wissen";
 
-    private String influxDbBucket="Telemetry_Data";
+    private String influxDbBucket="EV";
 
 
     @Override
