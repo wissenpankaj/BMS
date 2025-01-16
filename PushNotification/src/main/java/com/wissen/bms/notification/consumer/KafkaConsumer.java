@@ -70,7 +70,7 @@ public class KafkaConsumer {
             // Get the appropriate notification service and send the notification
             NotificationService notificationService =
                     notificationServiceFactory.getNotificationService(subscription.get().getNotificationType());
-            notificationService.sendNotification(vehicleData, subscription, Optional.empty());
+            notificationService.sendNotification(vehicleData, subscription);
 		}
 	}
 }
