@@ -60,7 +60,7 @@ public class EVUtil {
         batteryFault.setGps("gps");
         batteryFault.setVehicleId(ruleContext.getVehicleId());
         batteryFault.setBatteryId(ruleContext.getBatterId());
-        batteryFault.setFaultReason(ruleContext.getRiskReason());
+        batteryFault.setFaultReason(String.join(" | ", ruleContext.getRiskReason()));
         batteryFault.setRecommendation("Recommendation");
         batteryFault.setTime("time");
         batteryFault.setLevel(ruleContext.getRiskLevel());
