@@ -12,7 +12,7 @@ import java.util.Optional;
 @Repository
 public interface BatteryFaultRepo extends JpaRepository<BatteryFaultModel, String>, JpaSpecificationExecutor<BatteryFaultModel> {
 
-    Optional<List<BatteryFaultModel>> findByBatteryId(String batteryId);
+    Optional<BatteryFaultModel> findByBatteryId(String batteryId);
 
     Optional<List<BatteryFaultModel>> findByTimeBetween(LocalDateTime startOfDay, LocalDateTime endOfDay);
 
