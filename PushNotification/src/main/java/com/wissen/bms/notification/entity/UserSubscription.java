@@ -3,7 +3,7 @@ package com.wissen.bms.notification.entity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
-@Entity
+@Entity(name = "user_subscription")
 public class UserSubscription {
 	
 	@Id
