@@ -1,5 +1,6 @@
 package com.wissen.bms.notification.service;
 
+import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -11,7 +12,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.wissen.bms.common.model.BatteryFault;
 import com.wissen.bms.notification.model.NotificationResponse;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,10 +21,10 @@ import com.wissen.bms.notification.entity.UserSubscription;
 
 @Component
 public class AndroidPushNotificationService implements NotificationService {
-	private static final String FCM_ENDPOINT = "https://fcm.googleapis.com/v1/projects/YOUR_PROJECT_ID/messages:send";
+	private static final String FCM_ENDPOINT = "https://fcm.googleapis.com/v1/projects/ev-battery-fault-detection/messages:send";
 
-//	@Autowired // // Need to uncomment this during real android push notification
-	private GoogleCredentials googleCredentials;
+	@Value("${firebase.credentials.path}")
+	private String credentialsPath;
 
 	@Value("${mock:false}")
 	private boolean mock;
@@ -32,21 +32,24 @@ public class AndroidPushNotificationService implements NotificationService {
 	/**
 	 * Sends a notification to a device using Firebase Cloud Messaging (FCM).
 	 *
-	 * @param deviceToken The target device's FCM token.
 	 * @param vehicleData The vehicle data object containing the information for the notification.
 	 * @return ResponseEntity with the status and message.
 	 * @throws Exception If an error occurs while sending the notification.
 	 */
 	@Override
-	public ResponseEntity<NotificationResponse> sendNotification(BatteryFault vehicleData, Optional<UserSubscription> subscription, Optional<String> deviceToken) {
+	public ResponseEntity<NotificationResponse> sendNotification(BatteryFault vehicleData, Optional<UserSubscription> subscription) {
 		if (mock) {
 			// Mock Mode
-			return simulateNotification(deviceToken, vehicleData);
+			return simulateNotification(vehicleData);
 		} else {
 			// Real Mode
             try {
-				System.out.println("Sending email .. vehicleData : "+ vehicleData);
-                return sendRealNotification(deviceToken, vehicleData);
+				if(subscription.isPresent()){
+					Optional<String> deviceToken = Optional.of(subscription.get().getToken());
+					return sendRealNotification(deviceToken, vehicleData);
+				}
+				return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
+						.body(new NotificationResponse("error", "User subscription is not available."));
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -56,13 +59,11 @@ public class AndroidPushNotificationService implements NotificationService {
 	/**
 	 * Simulates sending a notification (for mock mode).
 	 *
-	 * @param deviceToken The target device's FCM token.
 	 * @param vehicleData The vehicle data object containing the information for the notification.
 	 * @return ResponseEntity with the mock success message.
 	 */
-	private ResponseEntity<NotificationResponse> simulateNotification(Optional<String> deviceToken, BatteryFault vehicleData) {
+	private ResponseEntity<NotificationResponse> simulateNotification(BatteryFault vehicleData) {
 		System.out.println("Mock Mode Enabled: Simulating notification sending...");
-		System.out.println("Device Token: " + deviceToken);
 		System.out.println("Vehicle Data: " + vehicleData);
 
 		// Mock Response: Return a mock notification response
@@ -80,6 +81,10 @@ public class AndroidPushNotificationService implements NotificationService {
 	 */
 	private ResponseEntity<NotificationResponse> sendRealNotification(Optional<String> deviceToken, BatteryFault vehicleData) throws Exception {
 		if(deviceToken.isPresent()) {
+			// Load Google Credentials
+			GoogleCredentials googleCredentials = GoogleCredentials.fromStream(new FileInputStream(credentialsPath))
+					.createScoped("https://www.googleapis.com/auth/firebase.messaging");
+
 			// Refresh token if expired
 			googleCredentials.refreshIfExpired();
 			String accessToken = googleCredentials.getAccessToken().getTokenValue();

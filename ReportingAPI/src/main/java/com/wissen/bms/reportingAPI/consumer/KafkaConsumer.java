@@ -3,14 +3,11 @@ package com.wissen.bms.reportingAPI.consumer;
 import com.wissen.bms.common.model.BatteryFault;
 import com.wissen.bms.reportingAPI.model.BatteryFaultModel;
 import com.wissen.bms.reportingAPI.repo.BatteryFaultRepo;
-import com.wissen.bms.reportingAPI.repo.BatteryFaultRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Service;
-
-import java.sql.Timestamp;
 import java.util.Optional;
 
 @Service

@@ -2,7 +2,6 @@ package com.wissen.bms.notification.service;
 
 import java.util.Optional;
 
-
 import com.wissen.bms.notification.entity.UserSubscription;
 import com.wissen.bms.common.model.BatteryFault;
 import com.wissen.bms.notification.model.NotificationResponse;
@@ -26,7 +25,7 @@ public class EmailNotificationService implements NotificationService {
 
     // Method to send a notification email
     @Override
-    public ResponseEntity<NotificationResponse> sendNotification(BatteryFault data, Optional<UserSubscription> subscription, Optional<String> deviceToken) {
+    public ResponseEntity<NotificationResponse> sendNotification(BatteryFault data, Optional<UserSubscription> subscription) {
         try {
             MimeMessage mimeMessage = javaMailSender.createMimeMessage();
             MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true);

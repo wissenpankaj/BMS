@@ -13,26 +13,29 @@ CREATE TABLE location (
 );
 
 
--- Table for vehicle
-CREATE TABLE vehicle (
-    vehicle_id VARCHAR(50) PRIMARY KEY,
-    vehicle_name VARCHAR(255) NOT NULL,
-    vehicle_type VARCHAR(50)
-);
-
 
 -- Table for battery
 CREATE TABLE battery (
     battery_id VARCHAR(50) PRIMARY KEY,
     type VARCHAR(50) NOT NULL,
     brand VARCHAR(50),
-    capacity INT, -- in watt-hours or any other unit
-    location_id VARCHAR(50),
+    capacity_in_kwh DECIMAL(10, 2), -- capacity in kilowatt-hours
+    station_id VARCHAR(50),
     expiry_date DATE,
     price INT,
     status VARCHAR(50) NOT NULL,
-    FOREIGN KEY (location_id) REFERENCES location(location_id)
+    FOREIGN KEY (station_id) REFERENCES station(station_id)
 );
+
+-- Table for vehicle
+CREATE TABLE vehicle (
+    vehicle_id VARCHAR(50) PRIMARY KEY,
+    make VARCHAR(255) NOT NULL,
+    model VARCHAR(255) NOT NULL,
+    vehicle_type VARCHAR(50),
+    battery_id VARCHAR(50) REFERENCES battery(battery_id)
+);
+
 
 -- Table for supplier
 CREATE TABLE supplier (
@@ -192,17 +195,19 @@ INSERT INTO station (station_id, name, location) VALUES
 ('stat004', 'Station 4', 'Location D'),
 ('stat005', 'Station 5', 'Location E');
 
--- Insert into vehicle
-INSERT INTO vehicle (vehicle_id, vehicle_name, vehicle_type) VALUES
-('user456', 'Vehicle A', 'Type 1'),
-('user123', 'Vehicle B', 'Type 2'),
-('user789', 'Vehicle C', 'Type 3');
 
 -- Insert into battery
-INSERT INTO battery (battery_id, type, brand, capacity, location_id, expiry_date, price, status) VALUES
-('BATTERY-0', 'Type A', 'Brand X', 100, 'loc001', '2025-12-31', 5000, 'Available'),
-('BATTERY-1', 'Type B', 'Brand Y', 200, 'loc002', '2026-12-31', 6000, 'Available'),
-('BATTERY-2', 'Type C', 'Brand Z', 300, 'loc003', '2027-12-31', 7000, 'Available');
+INSERT INTO battery (battery_id, type, brand, capacity_in_kwh, station_id, expiry_date, price, status) VALUES
+('BATTERY-0', 'Type A', 'Brand X', 100, 'stat001', '2025-12-31', 5000, 'Available'),
+('BATTERY-1', 'Type B', 'Brand Y', 200, 'stat002', '2026-12-31', 6000, 'Available'),
+('BATTERY-2', 'Type C', 'Brand Z', 300, 'stat003', '2027-12-31', 7000, 'Available');
+
+-- Insert into vehicle
+INSERT INTO vehicle (vehicle_id, make, model, vehicle_type, battery_id) VALUES
+('user123', 'Make A', 'Model A', 'Bike', 'BATTERY-0'),
+('user456', 'Make B', 'Model B', 'Bike', 'BATTERY-1'),
+('user789', 'Make C', 'Model C', 'Bike', 'BATTERY-2');
+
 
 -- Insert into supplier
 INSERT INTO supplier (supplier_id, supplier_name, contact_details, address) VALUES
