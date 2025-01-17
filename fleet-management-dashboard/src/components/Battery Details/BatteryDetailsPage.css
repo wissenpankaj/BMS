@@ -1,0 +1,53 @@
+.battery-details {
+    padding: 20px;
+    max-width: 600px;
+    margin: 0 auto;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
+  }
+  
+  .battery-details h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #333;
+  }
+  
+  .details-card {
+    padding: 20px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+  }
+  
+  .details-card p {
+    margin: 10px 0;
+    font-size: 16px;
+    color: #555;
+  }
+  
+  .details-card p strong {
+    color: #333;
+  }
+  
+  .details-card p:last-child {
+    margin-bottom: 0;
+  }
+  
+  .details-card {
+    animation: fadeIn 0.5s ease-in-out;
+  }
+  
+  /* Add a fade-in effect */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
