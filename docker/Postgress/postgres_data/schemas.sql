@@ -14,18 +14,6 @@ CREATE TABLE location (
 
 
 
--- Table for battery
-CREATE TABLE battery (
-    battery_id VARCHAR(50) PRIMARY KEY,
-    type VARCHAR(50) NOT NULL,
-    brand VARCHAR(50),
-    capacity_in_kwh DECIMAL(10, 2), -- capacity in kilowatt-hours
-    station_id VARCHAR(50),
-    expiry_date DATE,
-    price INT,
-    status VARCHAR(50) NOT NULL,
-    FOREIGN KEY (station_id) REFERENCES station(station_id)
-);
 
 -- Table for vehicle
 CREATE TABLE vehicle (
@@ -294,3 +282,30 @@ INSERT INTO user_token (token_id, user_id, token, expiry) VALUES
 ('token003', 'user003', 'tokenC', '2025-12-31 23:59:59'),
 ('token004', 'user004', 'tokenD', '2025-12-31 23:59:59'),
 ('token005', 'user005', 'tokenE', '2025-12-31 23:59:59');
+
+-- 1) Create purchase_orders table
+CREATE TABLE IF NOT EXISTS purchase_orders (
+    id SERIAL PRIMARY KEY,
+    purchase_order_id VARCHAR(50) UNIQUE NOT NULL,
+    station_id        VARCHAR(50),
+    battery_type      VARCHAR(50),
+    quantity          INT,
+    status            VARCHAR(50),
+    order_date        TIMESTAMP,
+    expected_delivery_date TIMESTAMP
+);
+
+-- 2) Create batteries table
+CREATE TABLE IF NOT EXISTS batteries (
+    id SERIAL PRIMARY KEY,
+    battery_id     VARCHAR(50) UNIQUE NOT NULL,
+    type           VARCHAR(50),
+    serial_number  VARCHAR(100),
+    status         VARCHAR(50),
+    purchase_order_id INT,
+    CONSTRAINT fk_purchase_order
+        FOREIGN KEY (purchase_order_id)
+        REFERENCES purchase_orders (id)
+        ON DELETE CASCADE
+);
+
