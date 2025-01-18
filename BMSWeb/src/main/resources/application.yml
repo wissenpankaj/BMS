@@ -2,7 +2,7 @@ server:
   port: 8088
 Api:
   reportingapi:
-    url: http://localhost:8081/api/faults
+    url: http://localhost:8085/api/faults
 
 
 spring:
