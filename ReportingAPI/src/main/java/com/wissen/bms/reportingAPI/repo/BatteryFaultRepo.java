@@ -16,5 +16,5 @@ public interface BatteryFaultRepo extends JpaRepository<BatteryFaultModel, Strin
 
     Optional<List<BatteryFaultModel>> findByTimeBetween(LocalDateTime startOfDay, LocalDateTime endOfDay);
 
-    Optional<List<BatteryFaultModel>> findByFaultReason(String faultReason);
+    Optional<BatteryFaultModel> findByFaultReason(String faultReason);
 }
