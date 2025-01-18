@@ -1,5 +1,6 @@
 package com.wissen.bms.reportingAPI.configuration;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -12,7 +13,10 @@ import java.io.IOException;
 @Component
 public class SwaggerJsonExporter {
 
-    private static final String SWAGGER_URL = "http://localhost:8080/api-docs";
+
+    @Value("${server.port}")
+    String serverPort="8081";
+    private  final String SWAGGER_URL = "http://localhost:"+serverPort+"/api-docs";
 
     @EventListener(ApplicationReadyEvent.class)
     public void exportSwaggerJson() {

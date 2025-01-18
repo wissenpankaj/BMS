@@ -1,0 +1,31 @@
+server:
+  port: 8088
+Api:
+  reportingapi:
+    url: http://localhost:8081/api/faults
+
+
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            client-id: bmsweb
+            client-name: Keycloak
+            provider: keycloak
+            authorization-grant-type: authorization_code
+            scope: openid, profile, email, bmsreport
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:9081/realms/bms
+            user-info-uri: http://localhost:9081/realms/bms/protocol/openid-connect/userinfo
+            jwk-set-uri: http://localhost:9081/realms/bms/protocol/openid-connect/certs
+
+
+
+
+
+
+

@@ -1,0 +1,50 @@
+server:
+  port: 8085
+spring:
+  application:
+    name: reportingAPi
+  datasource:
+    url: jdbc:postgresql://localhost:5433/battery_inventory
+    username: postgres
+    password: Postgres2025
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:9081/realms/bms
+          jwk-set-uri: http://localhost:9081/realms/bms/protocol/openid-connect/certs
+
+  kafka:
+    listener:
+      concurrency: 3
+      ack-mode: MANUAL
+      auto-startup: true
+    consumer:
+      auto-offset-reset: earliest
+      enable-auto-commit: false
+      bootstrap-servers: localhost:39092
+      group-id: vehicle-group
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring:
+          json:
+            value:
+              default:
+                type: com.wissen.bms.common.model.BatteryFault
+            trusted:
+              packages: com.wissen.bms.common.model
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui-custom.html
+

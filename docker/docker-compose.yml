@@ -107,11 +107,35 @@ services:
       context: ..\ReportingAPI
       dockerfile: Dockerfile
     ports:
-      - "8080:8080"
+      - "8085:8081"
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://my-postgres:5432/battery_inventory
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: Postgres2025
+    networks:
+      - my_network
+  keycloak:
+    image: quay.io/keycloak/keycloak:latest
+    ports:
+      - "9081:8080"
+      - "8443:8443"
+    environment:
+        KC_BOOTSTRAP_ADMIN_USERNAME: admin
+        KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+        KC_DB: postgres
+        KC_DB_URL: jdbc:postgresql://my-postgres:5432/keycloak
+        KC_DB_USERNAME: postgres
+        KC_DB_PASSWORD: Postgres2025
+        KC_HOSTNAME: localhost
+#        KC_HTTPS_PORT: 8443
+#        KC_HTTPS_KEY_STORE_FILE: /opt/keycloak/certs/keycloak.jks
+#        KC_HTTPS_KEY_STORE_PASSWORD: changeit
+    volumes:
+      - ./keycloak-data:/opt/keycloak/certs
+
+    command: start-dev
+    depends_on:
+        - postgres
     networks:
       - my_network
 
@@ -121,6 +145,7 @@ volumes:
     kafka-data-1:
       driver: local
     influxdb-data:
+    keycloak-data:
 
 networks:
     my_network:

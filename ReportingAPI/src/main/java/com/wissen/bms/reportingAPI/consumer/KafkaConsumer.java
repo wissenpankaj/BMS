@@ -4,6 +4,7 @@ import com.wissen.bms.common.model.BatteryFault;
 import com.wissen.bms.reportingAPI.model.BatteryFaultModel;
 import com.wissen.bms.reportingAPI.repo.BatteryFaultRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
@@ -16,6 +17,7 @@ public class KafkaConsumer {
 
     @Autowired
     private BatteryFaultRepo batteryFaultRepo;
+
 
     private static final String TOPIC_NAME = "faultalert";
 

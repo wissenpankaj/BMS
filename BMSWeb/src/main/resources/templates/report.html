@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Reports</title>
+</head>
+<body>
+<h1>Reports</h1>
+<ul>
+  <li th:each="report : ${reports}">
+    <span th:text="${report.faultId}"></span> - <span th:text="${report.vehicleId}"></span>
+  </li>
+</ul>
+<a th:href="@{/}">Back to Home</a>
+</body>
+</html>

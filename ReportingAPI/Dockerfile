@@ -6,9 +6,9 @@ WORKDIR /app
 
 # Copy the JAR file to the container
 COPY target/reportingAPI-1.0.0.jar application.jar
-
+ENV SPRING_DATASOURCE_URL=jdbc:postgresql://host.docker.internal:5433/battery_inventory
 # Expose the port your application runs on
-EXPOSE 8080
+EXPOSE 8081
 
 # Command to run the application
 ENTRYPOINT ["java", "-jar", "application.jar"]
