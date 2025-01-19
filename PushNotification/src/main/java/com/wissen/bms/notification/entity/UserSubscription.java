@@ -38,6 +38,9 @@ public class UserSubscription {
 	public void setToken(String token) {
 		this.deviceToken = token;
 	}
+	public String getToken (){ return
+		this.deviceToken ;
+	}
 
 	public String getEmail_Id() {
 		return email_Id;

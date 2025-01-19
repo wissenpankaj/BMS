@@ -47,4 +47,11 @@ springdoc:
     path: /api-docs
   swagger-ui:
     path: /swagger-ui-custom.html
-
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    httpexchanges:
+      access: UNRESTRICTED

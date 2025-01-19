@@ -112,6 +112,8 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://my-postgres:5432/battery_inventory
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: Postgres2025
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://keycloak:8080/realms/bms
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK-SET-URI: http://keycloak:8080/realms/bms/protocol/openid-connect/certs
     networks:
       - my_network
   keycloak:
