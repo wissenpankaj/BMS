@@ -38,7 +38,6 @@
         <module>PushNotification</module>
         <module>vehicleManagementApi</module>
         <module>StationManagement</module>
-        <module>BMSWeb</module>
         <module>ev-bms-security</module>
     </modules>
     <profiles>
