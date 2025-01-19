@@ -35,6 +35,7 @@
         <module>Common</module>
         <module>EvClient/JavaEvClient</module>
         <module>PushNotification</module>
+        <module>ev-bms-security</module>
 
     </modules>
 
