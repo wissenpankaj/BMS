@@ -1,24 +1,36 @@
 package com.wissen.bms.reportingAPI.controller;
 
+import com.wissen.bms.reportingAPI.model.BatteryFaultModel;
+import com.wissen.bms.reportingAPI.service.BatteryFaultService;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
-import com.wissen.bms.reportingAPI.service.BatteryFaultService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import com.wissen.bms.common.model.BatteryFault;
-
 @RestController
-@RequestMapping("api/batteries")
+@RequestMapping("/api/faults")
+@Validated
 public class BatteryFaultController {
-	
-	@Autowired
-	private BatteryFaultService batteryFaultService;
-	
-	@GetMapping("/all")
-	public List<BatteryFault> getAllBatteries()
-	{
-		return batteryFaultService.getAllBatteries();
-	}
+
+    @Autowired
+    private BatteryFaultService batteryFaultService;
+
+    @GetMapping
+    public ResponseEntity<List<BatteryFaultModel>> getBatteryFaults(
+            @RequestParam(required = false) String faultId,
+            @RequestParam(required = false) String gps,
+            @RequestParam(required = false) String vehicleId,
+            @RequestParam(required = false) String batteryId,
+            @RequestParam(required = false) String faultReason,
+            @RequestParam(required = false) String recommendation,
+            @RequestParam(required = false) String level,
+            @RequestParam(required = false) String risk,
+            @RequestParam(required = false) String date) {
+
+        List<BatteryFaultModel> batteryFaults = batteryFaultService.getBatteryFaults(faultId, gps, vehicleId, batteryId, faultReason, recommendation, level, risk, date);
+        return ResponseEntity.ok(batteryFaults);
+    }
 }
