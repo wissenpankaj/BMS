@@ -1,4 +1,4 @@
-package com.wissen.bms.notification.service;
+package com.wissen.bms.notification.service.push;
 
 import com.eatthepath.pushy.apns.ApnsClientBuilder;
 import com.eatthepath.pushy.apns.PushNotificationResponse;
@@ -7,6 +7,8 @@ import com.eatthepath.pushy.apns.util.SimpleApnsPushNotification;
 import com.wissen.bms.notification.entity.UserSubscription;
 import com.wissen.bms.common.model.BatteryFault;
 import com.wissen.bms.notification.model.NotificationResponse;
+import com.wissen.bms.common.model.VehicleInfo;
+import com.wissen.bms.notification.service.NotificationService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,7 +39,7 @@ public class iOSPushNotificationService implements NotificationService {
 	}
 
 	@Override
-	public ResponseEntity<NotificationResponse> sendNotification(BatteryFault data, Optional<UserSubscription> subscription) {
+	public <T extends VehicleInfo> ResponseEntity<NotificationResponse> sendNotification(T data, Optional<UserSubscription> subscription) {
 		if (mockMode) {
 			return sendMockNotification(data);
 		} else {
@@ -50,7 +52,7 @@ public class iOSPushNotificationService implements NotificationService {
 		}
 	}
 
-	private ResponseEntity<NotificationResponse> sendRealNotification(String deviceToken, BatteryFault data) {
+	private <T extends VehicleInfo> ResponseEntity<NotificationResponse> sendRealNotification(String deviceToken, T data) {
 		try {
 			// Build the payload
 			String payload = buildPayload(data);
@@ -80,12 +82,15 @@ public class iOSPushNotificationService implements NotificationService {
 		}
 	}
 
-	private ResponseEntity<NotificationResponse> sendMockNotification(BatteryFault data) {
+	private <T extends VehicleInfo> ResponseEntity<NotificationResponse> sendMockNotification(T data) {
 		try {
-			// Build mock response data
-			String mockData = String.format("Mock notification for Vehicle: %s, Battery: %s, GPS: %s",
-					data.getVehicleId(), data.getBatteryId(), data.getGps());
-
+			String mockData = null;
+			if (data instanceof BatteryFault) {
+				BatteryFault faultData = (BatteryFault) data;
+				// Build mock response data
+				mockData = String.format("Mock notification for Vehicle: %s, Battery: %s, GPS: %s",
+						faultData.getVehicleId(), faultData.getBatteryId(), faultData.getGps());
+			}
 			return ResponseEntity.ok(new NotificationResponse("success", mockData));
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -93,11 +98,15 @@ public class iOSPushNotificationService implements NotificationService {
 		}
 	}
 
-	private String buildPayload(BatteryFault data) {
+	private <T extends VehicleInfo> String buildPayload(T data) {
+		BatteryFault faultData = null;
+		if (data instanceof BatteryFault) {
+			faultData = (BatteryFault) data;
+		}
 		return String.format("{\"aps\":{\"alert\":{\"title\":\"Alert for Vehicle: %s\", \"body\":\"Battery: %s, GPS: %s\"},\"sound\":\"default\"}," +
 						"\"data\":{\"batteryId\":\"%s\",\"vehicleId\":\"%s\",\"gps\":\"%s\",\"timestamp\":\"%s\"}}",
-				data.getVehicleId(), data.getBatteryId(), data.getGps(),
-				data.getBatteryId(), data.getVehicleId(),
-				data.getGps(), data.getTime());
+				faultData.getVehicleId(), faultData.getBatteryId(), faultData.getGps(),
+				faultData.getBatteryId(), faultData.getVehicleId(),
+				faultData.getGps(), faultData.getTime());
 	}
 }

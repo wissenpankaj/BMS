@@ -1,4 +1,20 @@
-package com.wissen.bms.notification.service;
+package com.wissen.bms.notification.service.push;
+
+import com.google.auth.oauth2.GoogleCredentials;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.wissen.bms.common.model.BatteryFault;
+import com.wissen.bms.notification.entity.UserSubscription;
+import com.wissen.bms.notification.model.NotificationResponse;
+import com.wissen.bms.notification.model.NotificationType;
+import com.wissen.bms.common.model.VehicleInfo;
+import com.wissen.bms.notification.service.NotificationService;
+import com.wissen.bms.notification.service.builders.NotificationContentBuilder;
+import com.wissen.bms.notification.service.builders.NotificationContentBuilderRegistry;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
@@ -7,21 +23,10 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Optional;
 
-import com.google.auth.oauth2.GoogleCredentials;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.wissen.bms.common.model.BatteryFault;
-import com.wissen.bms.notification.model.NotificationResponse;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
-
-import com.wissen.bms.notification.entity.UserSubscription;
-
 @Component
-public class AndroidPushNotificationService implements NotificationService {
-	private static final String FCM_ENDPOINT = "https://fcm.googleapis.com/v1/projects/ev-battery-fault-detection/messages:send";
+public class WebPushNotificationService implements NotificationService {
+    private final NotificationContentBuilderRegistry builderRegistry;
+    private static final String FCM_ENDPOINT = "https://fcm.googleapis.com/v1/projects/ev-battery-fault-detection/messages:send";
 
 	@Value("${firebase.credentials.path}")
 	private String credentialsPath;
@@ -29,24 +34,28 @@ public class AndroidPushNotificationService implements NotificationService {
 	@Value("${mock:false}")
 	private boolean mock;
 
+    public WebPushNotificationService(NotificationContentBuilderRegistry builderRegistry){
+        this.builderRegistry = builderRegistry;
+    }
+
 	/**
 	 * Sends a notification to a device using Firebase Cloud Messaging (FCM).
 	 *
-	 * @param vehicleData The vehicle data object containing the information for the notification.
+	 * @param data The vehicle data object containing the information for the notification.
 	 * @return ResponseEntity with the status and message.
 	 * @throws Exception If an error occurs while sending the notification.
 	 */
 	@Override
-	public ResponseEntity<NotificationResponse> sendNotification(BatteryFault vehicleData, Optional<UserSubscription> subscription) {
+	public <T extends VehicleInfo> ResponseEntity<NotificationResponse> sendNotification(T data, Optional<UserSubscription> subscription) {
 		if (mock) {
 			// Mock Mode
-			return simulateNotification(vehicleData);
+			return simulateNotification(data);
 		} else {
 			// Real Mode
             try {
 				if(subscription.isPresent()){
 					Optional<String> deviceToken = Optional.of(subscription.get().getToken());
-					return sendRealNotification(deviceToken, vehicleData);
+					return sendRealNotification(deviceToken, data);
 				}
 				return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
 						.body(new NotificationResponse("error", "User subscription is not available."));
@@ -59,15 +68,15 @@ public class AndroidPushNotificationService implements NotificationService {
 	/**
 	 * Simulates sending a notification (for mock mode).
 	 *
-	 * @param vehicleData The vehicle data object containing the information for the notification.
+	 * @param data The vehicle data object containing the information for the notification.
 	 * @return ResponseEntity with the mock success message.
 	 */
-	private ResponseEntity<NotificationResponse> simulateNotification(BatteryFault vehicleData) {
+	private <T extends VehicleInfo> ResponseEntity<NotificationResponse> simulateNotification(T data) {
 		System.out.println("Mock Mode Enabled: Simulating notification sending...");
-		System.out.println("Vehicle Data: " + vehicleData);
+		System.out.println("Vehicle Data: " + data);
 
 		// Mock Response: Return a mock notification response
-		String mockResponse = buildPayload(vehicleData);
+		String mockResponse = buildPayload(data);
 		return ResponseEntity.status(HttpStatus.OK).body(new NotificationResponse("success", mockResponse));
 	}
 
@@ -75,11 +84,11 @@ public class AndroidPushNotificationService implements NotificationService {
 	 * Sends a real notification using Firebase's HTTP v1 API.
 	 *
 	 * @param deviceToken The target device's FCM token.
-	 * @param vehicleData The vehicle data object containing the information for the notification.
+	 * @param data The vehicle data object containing the information for the notification.
 	 * @return ResponseEntity with the real notification response.
 	 * @throws Exception If an error occurs while sending the notification.
 	 */
-	private ResponseEntity<NotificationResponse> sendRealNotification(Optional<String> deviceToken, BatteryFault vehicleData) throws Exception {
+	private <T extends VehicleInfo> ResponseEntity<NotificationResponse> sendRealNotification(Optional<String> deviceToken, T data) throws Exception {
 		if(deviceToken.isPresent()) {
 			// Load Google Credentials
 			GoogleCredentials googleCredentials = GoogleCredentials.fromStream(new FileInputStream(credentialsPath))
@@ -89,27 +98,11 @@ public class AndroidPushNotificationService implements NotificationService {
 			googleCredentials.refreshIfExpired();
 			String accessToken = googleCredentials.getAccessToken().getTokenValue();
 
-			// Build JSON payload
-			JsonObject notification = new JsonObject();
-			notification.addProperty("title", "Risk: " + vehicleData.getRisk());
-			notification.addProperty("body", "Level: " + vehicleData.getLevel());
+            // Find the appropriate content builder based on the vehicle data type and notification type
+            NotificationContentBuilder<T> builder = builderRegistry.findBuilder(data, NotificationType.WEB_PUSH);
 
-			JsonObject message = new JsonObject();
-			message.add("notification", notification);
-			message.addProperty("token", deviceToken.get());
-
-			JsonObject data = new JsonObject();
-			data.addProperty("batteryId", vehicleData.getBatteryId());
-			data.addProperty("vehicleId", vehicleData.getVehicleId());
-			data.addProperty("gps", vehicleData.getGps());
-			data.addProperty("faultReason", vehicleData.getFaultReason());
-			data.addProperty("recommendation", vehicleData.getRecommendation());
-			data.addProperty("timestamp", vehicleData.getTime());
-
-			message.add("data", data);
-
-			JsonObject payload = new JsonObject();
-			payload.add("message", message);
+            // Build the content for the notification
+            String content = builder.buildContent(data, deviceToken.get());
 
 			// Send HTTP request
 			URL url = new URL(FCM_ENDPOINT);
@@ -120,7 +113,7 @@ public class AndroidPushNotificationService implements NotificationService {
 			connection.setDoOutput(true);
 
 			try (OutputStream os = connection.getOutputStream()) {
-				os.write(payload.toString().getBytes("UTF-8"));
+				os.write(content.getBytes("UTF-8"));
 			}
 
 			int responseCode = connection.getResponseCode();
@@ -152,17 +145,21 @@ public class AndroidPushNotificationService implements NotificationService {
 	/**
 	 * Builds the notification payload.
 	 *
-	 * @param vehicleData The vehicle data object.
+	 * @param data The vehicle data object.
 	 * @return The formatted payload string.
 	 */
-	private String buildPayload(BatteryFault vehicleData) {
+	private <T extends VehicleInfo> String buildPayload(T data) {
+		BatteryFault faultData = null;
+		if (data instanceof BatteryFault) {
+			faultData = (BatteryFault) data;
+		}
 		return String.format("{\"alert\":{\"title\":\"Risk: %s\", \"body\":\"Level: %s\"},\"sound\":\"default\"}," +
 						"\"data\":{\"batteryId\":\"%s\",\"vehicleId\":\"%s\",\"gps\":\"%s\",\"faultReason\":\"%s\"," +
 						"\"recommendation\":\"%s\",\"timestamp\":\"%s\"}",
-				vehicleData.getRisk(), vehicleData.getLevel(),
-				vehicleData.getBatteryId(), vehicleData.getVehicleId(),
-				vehicleData.getGps(), vehicleData.getFaultReason(),
-				vehicleData.getRecommendation(), vehicleData.getTime());
+				faultData.getRisk(), faultData.getLevel(),
+				faultData.getBatteryId(), faultData.getVehicleId(),
+				faultData.getGps(), faultData.getFaultReason(),
+				faultData.getRecommendation(), faultData.getTime());
 	}
 
 }
