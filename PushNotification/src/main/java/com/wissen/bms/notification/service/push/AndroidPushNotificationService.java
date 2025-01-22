@@ -1,0 +1,170 @@
+package com.wissen.bms.notification.service.push;
+
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.Optional;
+
+import com.google.auth.oauth2.GoogleCredentials;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.wissen.bms.common.model.BatteryFault;
+import com.wissen.bms.notification.model.NotificationResponse;
+import com.wissen.bms.notification.model.NotificationType;
+import com.wissen.bms.common.model.VehicleInfo;
+import com.wissen.bms.notification.service.NotificationService;
+import com.wissen.bms.notification.service.builders.NotificationContentBuilder;
+import com.wissen.bms.notification.service.builders.NotificationContentBuilderRegistry;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
+
+import com.wissen.bms.notification.entity.UserSubscription;
+
+@Component
+public class AndroidPushNotificationService implements NotificationService {
+	private final NotificationContentBuilderRegistry builderRegistry;
+	private static final String FCM_ENDPOINT = "https://fcm.googleapis.com/v1/projects/ev-battery-fault-detection/messages:send";
+
+	@Value("${firebase.credentials.path}")
+	private String credentialsPath;
+
+	@Value("${mock:false}")
+	private boolean mock;
+
+	public AndroidPushNotificationService(NotificationContentBuilderRegistry builderRegistry){
+		this.builderRegistry = builderRegistry;
+	}
+
+	/**
+	 * Sends a notification to a device using Firebase Cloud Messaging (FCM).
+	 *
+	 * @param data The vehicle data object containing the information for the notification.
+	 * @return ResponseEntity with the status and message.
+	 * @throws Exception If an error occurs while sending the notification.
+	 */
+	@Override
+	public <T extends VehicleInfo> ResponseEntity<NotificationResponse> sendNotification(T data, Optional<UserSubscription> subscription) {
+		if (mock) {
+			// Mock Mode
+			return simulateNotification(data);
+		} else {
+			// Real Mode
+			try {
+				if (subscription.isPresent()) {
+					String deviceToken = subscription.get().getToken();
+					return sendRealNotification(Optional.of(deviceToken), data);
+				}
+
+				return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
+						.body(new NotificationResponse("error", "User subscription is not available."));
+			} catch (Exception e) {
+				throw new RuntimeException("Failed to send notification: " + e.getMessage(), e);
+			}
+		}
+	}
+
+
+	/**
+	 * Simulates sending a notification (for mock mode).
+	 *
+	 * @param data The vehicle data object containing the information for the notification.
+	 * @return ResponseEntity with the mock success message.
+	 */
+	private <T extends VehicleInfo> ResponseEntity<NotificationResponse> simulateNotification(T data) {
+		System.out.println("Mock Mode Enabled: Simulating notification sending...");
+		System.out.println("Vehicle Data: " + data);
+
+		// Mock Response: Return a mock notification response
+		String mockResponse = null;
+		if (data instanceof BatteryFault) {
+			BatteryFault faultData = (BatteryFault) data;
+			mockResponse = buildPayload(faultData);
+		}
+		return ResponseEntity.status(HttpStatus.OK).body(new NotificationResponse("success", mockResponse));
+	}
+
+	/**
+	 * Sends a real notification using Firebase's HTTP v1 API.
+	 *
+	 * @param deviceToken The target device's FCM token.
+	 * @param data The vehicle data object containing the information for the notification.
+	 * @return ResponseEntity with the real notification response.
+	 * @throws Exception If an error occurs while sending the notification.
+	 */
+	private <T extends VehicleInfo> ResponseEntity<NotificationResponse> sendRealNotification(Optional<String> deviceToken, T data) throws Exception {
+		if(deviceToken.isPresent()) {
+			// Load Google Credentials
+			GoogleCredentials googleCredentials = GoogleCredentials.fromStream(new FileInputStream(credentialsPath))
+					.createScoped("https://www.googleapis.com/auth/firebase.messaging");
+
+			// Refresh token if expired
+			googleCredentials.refreshIfExpired();
+			String accessToken = googleCredentials.getAccessToken().getTokenValue();
+
+			// Find the appropriate content builder based on the vehicle data type and notification type
+			NotificationContentBuilder<T> builder = builderRegistry.findBuilder(data, NotificationType.ANDROID_PUSH);
+
+			// Build the content for the notification
+			String content = builder.buildContent(data, deviceToken.get());
+
+			// Send HTTP request
+			URL url = new URL(FCM_ENDPOINT);
+			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+			connection.setRequestMethod("POST");
+			connection.setRequestProperty("Authorization", "Bearer " + accessToken);
+			connection.setRequestProperty("Content-Type", "application/json; UTF-8");
+			connection.setDoOutput(true);
+
+			try (OutputStream os = connection.getOutputStream()) {
+				os.write(content.getBytes("UTF-8"));
+			} catch (Exception ex){
+				System.out.println("Exception occurred while writing android push notification content...");
+			}
+
+			int responseCode = connection.getResponseCode();
+			if (responseCode == 200) {
+				// Read the response from FCM server
+				StringBuilder response = new StringBuilder();
+				try (InputStreamReader in = new InputStreamReader(connection.getInputStream())) {
+					int charRead;
+					while ((charRead = in.read()) != -1) {
+						response.append((char) charRead);
+					}
+				}
+
+				// Convert the response into a JSON object and return the response from FCM
+				JsonObject fcmResponse = new JsonParser().parse(response.toString()).getAsJsonObject();
+
+				// Return the response from Firebase (status and message ID)
+				return ResponseEntity.status(HttpStatus.OK)
+						.body(new NotificationResponse("success", fcmResponse.toString()));
+			} else {
+				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+						.body(new NotificationResponse("error", "Failed to send notification. HTTP error code: " + responseCode));
+			}
+		}
+		return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
+				.body(new NotificationResponse("error", "Device token is missing for the specified notification type."));
+	}
+
+	/**
+	 * Builds the notification payload.
+	 *
+	 * @param vehicleData The vehicle data object.
+	 * @return The formatted payload string.
+	 */
+	private <T extends VehicleInfo> String buildPayload(BatteryFault vehicleData) {
+		return String.format("{\"alert\":{\"title\":\"Risk: %s\", \"body\":\"Level: %s\"},\"sound\":\"default\"}," +
+						"\"data\":{\"batteryId\":\"%s\",\"vehicleId\":\"%s\",\"gps\":\"%s\",\"faultReason\":\"%s\"," +
+						"\"recommendation\":\"%s\",\"timestamp\":\"%s\"}",
+				vehicleData.getRisk(), vehicleData.getLevel(),
+				vehicleData.getBatteryId(), vehicleData.getVehicleId(),
+				vehicleData.getGps(), vehicleData.getFaultReason(),
+				vehicleData.getRecommendation(), vehicleData.getTime());
+	}
+
+}

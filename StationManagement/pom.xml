@@ -8,7 +8,7 @@
 		<version>1.0.0</version>
 		<relativePath>../pom.xml</relativePath> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.example</groupId>
+	<groupId>com.wissen.bms</groupId>
 	<artifactId>ev-station-management</artifactId>
 	<name>ev-station-management</name>
 	<description>Demo project for Spring Boot</description>
