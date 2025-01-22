@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 
-@EnableKafka
+//@EnableKafka
 @Service
 public class FaultAlertConsumer {
 
@@ -32,6 +32,9 @@ public class FaultAlertConsumer {
 
     @KafkaListener(topics = "faultalert", groupId = "fault-alert-group")
     public void consumeFaultAlert(String message) {
+//        System.out.println("----------------------------------------------------");
+//        System.out.println("----------------------------------------------------");
+//        System.out.println("----------------------------------------------------");
         System.out.println(message);
         try {
             // Parse the JSON message
@@ -61,14 +64,14 @@ public class FaultAlertConsumer {
 
             // Process the fault alert
 
-            faultyBattery.setBatteryId(jsonObject.optString("batteryId", null)); // Setting the battery ID
-            faultyBattery.setType("Li-Ion 12V");  // Static type for this example, modify if dynamic
-            faultyBattery.setSerialNumber("SN" + jsonObject.optString("batteryId", null)); // Example serial number
+//            faultyBattery.setBatteryId(jsonObject.optString("batteryId", null)); // Setting the battery ID
+//            faultyBattery.setType("Li-Ion 12V");  // Static type for this example, modify if dynamic
+//            faultyBattery.setSerialNumber("SN" + jsonObject.optString("batteryId", null)); // Example serial number
 
             // Create a new StationFaultReport object and set its properties
 
-            report.setStationId("station-123");  // Static station ID for this example, modify as needed
-            report.setFaultyBatteries(Collections.singletonList(faultyBattery));  // Add the FaultyBattery to the list
+//            report.setStationId("station-123");  // Static station ID for this example, modify as needed
+//            report.setFaultyBatteries(Collections.singletonList(faultyBattery));  // Add the FaultyBattery to the list
 
             faultAlertProcessor.processFaultAlert(faultAlertEntity);
 

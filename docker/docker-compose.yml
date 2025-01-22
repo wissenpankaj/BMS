@@ -114,7 +114,21 @@ services:
       SPRING_DATASOURCE_PASSWORD: Postgres2025
     networks:
       - my_network
+  station-api:
+    image: station-api:latest
+    build:
+      context: ..\StationManagement
+      dockerfile: Dockerfile
+    ports:
+      - "8085:8085"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://my-postgres:5432/battery_inventory
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: Postgres2025
+      SPRING_KAFKA_CONSUMER_BOOTSTRAP-SERVERS:  kafka-broker-1:9092
 
+    networks:
+      - my_network
 volumes:
     postgres_data:
       driver: local

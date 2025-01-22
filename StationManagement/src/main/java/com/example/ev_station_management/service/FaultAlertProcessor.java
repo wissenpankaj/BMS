@@ -14,6 +14,9 @@ public class FaultAlertProcessor {
     @Autowired
     private NotificationService notificationService;
 
+    @Autowired
+    private StationNotificationService stationNotificationService;
+
     public void processFaultAlert(FaultAlertEntity faultAlertEntity) {
         System.out.println("Processing Fault Alert: " + faultAlertEntity);
 
@@ -52,7 +55,9 @@ public class FaultAlertProcessor {
                 // Sufficient stock available
                 System.out.println("Nearest station which has stock. Recommending to driver.");
                 notifyDriver(faultAlertEntity.getVehicleId(), nearestStation);
-                stationService.handleSwapRequest(nearestStation.getStation_id());
+//                stationService.handleSwapRequest(nearestStation.getStationId());
+
+
             } else {
 //                // Insufficient stock, find next nearest station
 //                System.out.println("Station does not have sufficient stock. Finding next nearest station...");
@@ -81,7 +86,7 @@ public class FaultAlertProcessor {
         String message = "Nearest station for swap: " + station.getName() +
                 " (Stock: " + station.getAvailableStock() + "). Location: " +
                 station.getLatitude() + ", " + station.getLongitude();
-        notificationService.notifyDriver(vehicleId, message);
+        stationNotificationService.notifyDriver(vehicleId, station);
     }
 
     private void notifyDriverOfDelay(String vehicleId, Station station) {

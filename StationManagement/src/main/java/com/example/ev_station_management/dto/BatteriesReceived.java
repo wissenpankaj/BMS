@@ -1,18 +1,23 @@
 package com.example.ev_station_management.dto;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class BatteriesReceived {
 
-    private Long station_id; // The station ID (formerly id)
-    private List<Long> listOfBattery; // List of battery IDs
+    private Long station_id; // The station ID
+    private List<String> listOfBattery; // List of battery IDs as Strings
 
     // Constructors
     public BatteriesReceived() {}
 
+    // Constructor where listOfBattery is a List<Long>, converting it to List<String>
     public BatteriesReceived(Long station_id, List<Long> listOfBattery) {
         this.station_id = station_id;
-        this.listOfBattery = listOfBattery;
+        // Convert List<Long> to List<String>
+        this.listOfBattery = listOfBattery.stream()
+                .map(String::valueOf)  // Convert each Long to String
+                .collect(Collectors.toList());
     }
 
     // Getters and Setters
@@ -24,11 +29,12 @@ public class BatteriesReceived {
         this.station_id = station_id;
     }
 
-    public List<Long> getListOfBattery() {
+    public List<String> getListOfBattery() {
         return listOfBattery;
     }
 
-    public void setListOfBattery(List<Long> listOfBattery) {
+    public void setListOfBattery(List<String> listOfBattery) {
+        // No need to convert when setting a List<String> here
         this.listOfBattery = listOfBattery;
     }
 

@@ -36,6 +36,7 @@
         <module>EvClient/JavaEvClient</module>
         <module>PushNotification</module>
         <module>StationManagement</module>
+        <module>BatteryInventory</module>
 
     </modules>
 

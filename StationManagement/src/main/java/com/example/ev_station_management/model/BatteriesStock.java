@@ -3,20 +3,21 @@ package com.example.ev_station_management.model;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "batteries_stock")
 public class BatteriesStock {
 
     @Id
-    @Column(name = "station_id") // Renamed the id to station_id as per your request
+    @Column(name = "station_id")
     private Long stationId; // The station_id field is now the primary key and manually provided
 
     @Column(name = "battery_id")
-    private Long batteryId; // Foreign key to the Battery table (battery ID)
+    private String batteryId; // Foreign key to the Battery table (battery ID)
 
     // Constructors
     public BatteriesStock() {}
 
-    public BatteriesStock(Long stationId, Long batteryId) {
-        this.stationId = stationId; // Manually set the stationId
+    public BatteriesStock(Long stationId, String batteryId) {
+        this.stationId = stationId;
         this.batteryId = batteryId;
     }
 
@@ -29,11 +30,11 @@ public class BatteriesStock {
         this.stationId = stationId;
     }
 
-    public Long getBatteryId() {
+    public String getBatteryId() {
         return batteryId;
     }
 
-    public void setBatteryId(Long batteryId) {
+    public void setBatteryId(String batteryId) {
         this.batteryId = batteryId;
     }
 
@@ -41,7 +42,7 @@ public class BatteriesStock {
     public String toString() {
         return "BatteriesStock{" +
                 "stationId=" + stationId +
-                ", batteryId=" + batteryId +
+                ", batteryId='" + batteryId + '\'' +
                 '}';
     }
 }

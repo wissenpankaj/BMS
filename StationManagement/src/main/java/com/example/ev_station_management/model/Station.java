@@ -8,21 +8,22 @@ public class Station {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "station_id") // Column name in the DB is station_id
-    private Long station_id;
+    private Long stationId;
 
     private String name;
     private double latitude;
     private double longitude;
+    @Column(name = "available_stock")
     private int availableStock;
     private int minStockLevel; // Minimum stock level for the station
 
     // Getters and Setters
-    public Long getStation_id() {
-        return station_id;
+    public Long getStationId() {
+        return stationId;
     }
 
-    public void setStation_id(Long station_id) {
-        this.station_id = station_id;
+    public void setStationId(Long stationId) {
+        this.stationId = stationId;
     }
 
     public String getName() {

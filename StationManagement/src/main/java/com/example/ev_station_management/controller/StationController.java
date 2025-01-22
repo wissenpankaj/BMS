@@ -11,8 +11,9 @@ public class StationController {
     @Autowired
     private StationService stationService;
 
-    @PutMapping("/{id}/swap")
+    @GetMapping("/{id}/swap")
     public String swapBattery(@PathVariable Long id) {
+        System.out.println("Driver Request Swap");
         return stationService.handleSwapRequest(id);
     }
 }
