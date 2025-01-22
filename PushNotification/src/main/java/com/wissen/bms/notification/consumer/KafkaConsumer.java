@@ -38,7 +38,7 @@ public class KafkaConsumer {
 
 	// Listener for Other Topic
 	@KafkaListener(topics = NEAR_STATION_TOPIC, groupId = "vehicle-group")
-	public void listenOtherTopic(StationInfoDTO stationInfo) {
+	public void listenNearByStation(StationInfoDTO stationInfo) {
 		handleMessage(stationInfo);
 	}
 
