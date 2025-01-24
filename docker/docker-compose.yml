@@ -1,0 +1,155 @@
+version: '3.8'
+
+services:
+  influxdb:
+    image: influxdb:2.7.11
+    container_name: influxdb
+    ports:
+      - "8086:8086"
+    env_file:
+      - influxdb/influxv2.env
+    volumes:
+      - ./influxdb/influxdb-data:/var/lib/influxdb2:rw
+    networks:
+      my_network:
+
+  mqtt-broker:
+    image: eclipse-mosquitto:latest
+    container_name: mqtt-broker
+    restart: always
+    ports:
+      - "1883:1883"  # MQTT default port
+      - "9001:9001"  # WebSocket port (optional)
+    volumes:
+      - ./mqtt/config:/mosquitto/config
+      - ./mqtt/data:/mosquitto/data
+    networks:
+      my_network:
+  kafka-broker-1:
+    image: confluentinc/cp-kafka:7.8.0
+    container_name: kafka-broker-1
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+      - "39092:39092"
+    environment:
+      KAFKA_PROCESS_ROLES: 'broker,controller'
+      KAFKA_LISTENERS: 'PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:29092,PLAINTEXT_HOST://0.0.0.0:39092'
+      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://kafka-broker-1:9092,PLAINTEXT_HOST://localhost:39092'
+      KAFKA_NODE_ID: 1
+      KAFKA_CONTROLLER_QUORUM_VOTERS: '1@kafka-broker-1:29092'
+      CLUSTER_ID: 'MkU3OEVBNTcwNTJENDM2Qk'  # Replace with your cluster ID
+      KAFKA_KRAFT_MODE: 'true'
+      KAFKA_LOG_DIRS: '/var/lib/kafka/data'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT'
+      KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
+      KAFKA_INTER_BROKER_LISTENER_NAME: 'PLAINTEXT'
+      KAFKA_MIN_INSYNC_REPLICAS: 1
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    volumes:
+      - kafka-data-1:/var/lib/kafka/data
+    networks:
+      - kafka-net
+      - my_network
+    restart: always
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+          cpus: "1.0"
+        reservations:
+          memory: 1G
+          cpus: "0.5"
+
+  create-topics:
+    image: confluentinc/cp-kafka:7.8.0
+    container_name: create-topics
+    depends_on:
+      - kafka-broker-1
+    entrypoint: ["/bin/bash", "-c", "/create-topics.sh"]
+    volumes:
+      - ./kafka/create-topics.sh:/create-topics.sh
+    networks:
+      - kafka-net
+      - my_network
+
+  postgres:
+    image: postgres:latest
+    hostname: my-postgres
+    container_name: my-postgres
+    environment:
+      POSTGRES_PASSWORD: Postgres2025  # Replace with your desired password
+      POSTGRES_DB: battery_inventory   # Replace with the database you want
+    ports:
+      - "5433:5432"  # Expose PostgreSQL port
+    volumes:
+      #- postgres_data:/var/lib/postgresql/data  # Persist PostgreSQL data
+      #- ./postgres_data/schemas.sql:/var/lib/postgresql/data/schemas.sql
+      - ./postgress/postgres_data:/docker-entrypoint-initdb.d/
+    networks:
+      - my_network
+  push-notification:
+    image: pushnotification-api:latest
+    build:
+      context: ..\PushNotification
+      dockerfile: Dockerfile
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://my-postgres:5432/battery_inventory
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: Postgres2025
+    ports:
+      - "8081:8080"
+    networks:
+      - my_network
+  reporting-api:
+    image: reporting-api:latest
+    build:
+      context: ..\ReportingAPI
+      dockerfile: Dockerfile
+    ports:
+      - "8085:8085"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://my-postgres:5432/battery_inventory
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: Postgres2025
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://keycloak:8080/realms/bms
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK-SET-URI: http://keycloak:8080/realms/bms/protocol/openid-connect/certs
+    networks:
+      - my_network
+  keycloak:
+    image: quay.io/keycloak/keycloak:latest
+    ports:
+      - "9081:8080"
+      - "8443:8443"
+    environment:
+        KC_BOOTSTRAP_ADMIN_USERNAME: admin
+        KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+        KC_DB: postgres
+        KC_DB_URL: jdbc:postgresql://my-postgres:5432/keycloak
+        KC_DB_USERNAME: postgres
+        KC_DB_PASSWORD: Postgres2025
+        KC_HOSTNAME: localhost
+#        KC_HTTPS_PORT: 8443
+#        KC_HTTPS_KEY_STORE_FILE: /opt/keycloak/certs/keycloak.jks
+#        KC_HTTPS_KEY_STORE_PASSWORD: changeit
+    volumes:
+      - ./keycloak-data:/opt/keycloak/certs
+
+    command: start-dev
+    depends_on:
+        - postgres
+    networks:
+      - my_network
+
+volumes:
+    postgres_data:
+      driver: local
+    kafka-data-1:
+      driver: local
+    influxdb-data:
+    keycloak-data:
+
+networks:
+    my_network:
+      driver: bridge
+    kafka-net:

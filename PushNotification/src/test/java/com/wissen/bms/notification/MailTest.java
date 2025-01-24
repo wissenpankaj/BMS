@@ -1,6 +1,6 @@
 package com.wissen.bms.notification;
 
-import com.wissen.bms.notification.service.EmailNotificationService;
+import com.wissen.bms.notification.service.email.EmailNotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

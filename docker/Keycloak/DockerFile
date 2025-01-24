@@ -1,0 +1,17 @@
+FROM quay.io/keycloak/keycloak:latest
+# Add all other build parameters needed, for example enable health and metrics:
+ENV KC_HEALTH_ENABLED=true
+ENV KC_METRICS_ENABLED=true
+ENV db=postgres
+
+# The username of the database user.
+ENV db-username=postgres
+
+# The password of the database user.
+ENV db-password=Postgres2025
+
+# Sets the hostname of the default JDBC URL of the chosen vendor
+ENV db-url-host=my-postgres
+
+# To be able to use the image with the Keycloak Operator, it needs to be optimized, which requires Keycloak's build step:
+RUN /opt/keycloak/bin/kc.sh build

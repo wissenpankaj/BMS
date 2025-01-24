@@ -3,7 +3,7 @@ package com.wissen.bms.notification.entity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
-@Entity
+@Entity(name = "user_subscription")
 public class UserSubscription {
 	
 	@Id
@@ -11,7 +11,7 @@ public class UserSubscription {
 	
 	private String notificationType;
 	
-	private String token;
+	private String deviceToken;
 	
 	private String email_Id;
 
@@ -31,12 +31,15 @@ public class UserSubscription {
 		this.notificationType = notificationType;
 	}
 
-	public String getToken() {
-		return token;
+	public String getDeviceToken() {
+		return deviceToken;
 	}
 
 	public void setToken(String token) {
-		this.token = token;
+		this.deviceToken = token;
+	}
+	public String getToken (){ return
+		this.deviceToken ;
 	}
 
 	public String getEmail_Id() {
@@ -50,7 +53,7 @@ public class UserSubscription {
 	@Override
 	public String toString() {
 		return "UserSubscription [vehicleId=" + vehicleId + ", notificationType=" + notificationType + ", token="
-				+ token + ", email_Id=" + email_Id + "]";
+				+ deviceToken + ", email_Id=" + email_Id + "]";
 	}
 
 		

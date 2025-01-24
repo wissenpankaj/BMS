@@ -1,6 +1,6 @@
 package com.wissen.bms.common.model;
 
-public class BatteryFault {
+public class BatteryFault implements VehicleInfo {
     private String gps;
     private String vehicleId;
     private String batteryId;

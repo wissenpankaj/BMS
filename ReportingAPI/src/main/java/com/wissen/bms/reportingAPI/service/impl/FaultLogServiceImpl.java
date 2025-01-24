@@ -11,7 +11,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
-@Service
+//@Service
 public class FaultLogServiceImpl implements FaultLogService {
 
     @Autowired

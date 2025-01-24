@@ -1,2 +1,6 @@
-CREATE TABLE IF NOT EXISTS UserSubscription(     vehicleId VARCHAR(255) PRIMARY KEY,     notificationType VARCHAR(255),     deviceToken VARCHAR(255), emailID VARCHAR(255) );
-CREATE TABLE IF NOT EXISTS user_subscription(     vehicle_Id VARCHAR(255) PRIMARY KEY,     notification_Type VARCHAR(255),     device_Token VARCHAR(255), email_ID VARCHAR(255) );
+CREATE TABLE IF NOT EXISTS user_subscription (
+    vehicle_id VARCHAR(255) NOT NULL PRIMARY KEY,
+    notification_type VARCHAR(255),
+    device_token VARCHAR(255),
+    email_id VARCHAR(255)
+);
