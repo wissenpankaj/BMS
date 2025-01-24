@@ -1,0 +1,36 @@
+.sidebar {
+    background-color: var(--sidebar-bg-color);
+    color: white;
+    width: 250px;
+    padding: var(--padding);
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .sidebar ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .sidebar ul li {
+    margin: 20px 0;
+  }
+  
+  .sidebar ul li a {
+    color: white;
+    font-size: 16px;
+    font-weight: 500;
+    text-transform: uppercase;
+    display: block;
+    padding: 10px;
+    border-radius: var(--border-radius);
+  }
+  
+  .sidebar ul li a:hover {
+    background-color: var(--primary-color);
+  }
+  
