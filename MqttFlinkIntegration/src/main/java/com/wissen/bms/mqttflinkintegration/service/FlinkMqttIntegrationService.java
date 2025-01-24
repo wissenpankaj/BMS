@@ -149,19 +149,19 @@ public class FlinkMqttIntegrationService {
             // Collect all telemetry data into a batch
             log.info("Inside @class FlinkMqttIntegrationService BatchProcessor @method apply key : {}, timeWindow : {}, input: {}", key, timeWindow, input);
             input.forEach(batch::add);
-
             log.info("Inside @class FlinkMqttIntegrationService BatchProcessor size : {}",batch.size());
 
             RuleContext ruleContext = ruleEngineService.processTelemetryData(batch);
             log.info("ruleContext BatchProcessor @method apply ruleContext : {}", ruleContext);
 
-            if ("High".equals(ruleContext.getRiskLevel())) {
+            if ("Critical".equals(ruleContext.getRiskLevel()) || "HighRisk".equals(ruleContext.getRiskLevel())) {
                 BatteryFault batteryFault = EVUtil.convertRuleContextToBatteryFault(ruleContext);
                 batteryFault.setGps(batch.get(0).getGps());
                 batteryFault.setTime(String.valueOf(batch.get(0).getTime()));
                 String batteryFault1 = EVUtil.serializeBatteryFault(batteryFault);
                 out.collect(batteryFault1);
-                log.info("ruleContext BatchProcessor @method apply risk High");
+                System.err.println("Fault detected for batch data, going to sink faulty data : "+ruleContext.getRiskLevel());
+                log.info("Fault detected for batch data, going to sink faulty data : {}", ruleContext.getRiskLevel());
             }
 
         }
@@ -186,17 +186,16 @@ public class FlinkMqttIntegrationService {
 
         @Override
         public void processElement(TelemetryData telemetryData, KeyedProcessFunction<String, TelemetryData, String>.Context context, Collector<String> out) throws Exception {
-
-            log.info("telemetryData data : {}", telemetryData);
+           log.info("telemetry data : {}", telemetryData);
            RuleContext ruleContext = ruleEngineService.processSingleTelemetryData(telemetryData);
            log.info("ruleContext data : {}", ruleContext);
-            if ("Critical".equals(ruleContext.getRiskLevel())) {
+            if ("Critical".equals(ruleContext.getRiskLevel()) || "HighRisk".equals(ruleContext.getRiskLevel())) {
                 BatteryFault batteryFault = EVUtil.convertRuleContextToBatteryFault(ruleContext);
                 batteryFault.setGps(telemetryData.getGps());
                 batteryFault.setTime(String.valueOf(telemetryData.getTime()));
                 String batteryFault1 = EVUtil.serializeBatteryFault(batteryFault);
                 out.collect(batteryFault1);
-                log.info("going to collect FaultSink @method invoke");
+                System.err.println("Fault detected going to sink faulty data : "+ruleContext.getRiskLevel());
             }
 
             TelemetryData lastTelemetry = lastTelemetryState.value();
