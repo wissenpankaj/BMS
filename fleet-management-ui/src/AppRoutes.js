@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';  // Import Routes from react-router-dom
 import DashboardPage from './pages/DashboardPage';
+import FaultyBatteryComponent from './components/FaultyBatteries/FaultyBatteryList';
 import FaultyBatteriesPage from './pages/FaultyBatteriesPage';
 
 function AppRoutes() {
@@ -8,7 +9,7 @@ function AppRoutes() {
     <Router>
       <Routes>  {/* Use Routes from react-router-dom */}
         <Route path="/dashboard" element={<DashboardPage />} />  {/* Use element instead of component */}
-        <Route path="/faulty-batteries" element={<FaultyBatteriesPage />} />
+        <Route path="/faulty-batteries" element={<FaultyBatteryComponent />} />
         {/* Add more routes as needed */}
       </Routes>
     </Router>

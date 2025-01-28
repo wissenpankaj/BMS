@@ -1,13 +1,26 @@
-import FaultyBatterySdk from './sdk/faultyBattery/src';
 
-const faultyBatteryApi = new FaultyBatterySdk.BatteryFaultControllerApi();
+// import FaultBatterySdk from '../sdk/faultyBattery/src/index'
+import BatteryFaultControllerApi from "../sdk/faultyBattery/src/api/BatteryFaultControllerApi";
+
+// const faultyBatteryApi = new FaultyBatterySdk.BatteryFaultControllerApi();
+
 
 export const useSdk = (baseUrl, token) => {
   // Configure the SDK instance
-  faultyBatteryApi.apiClient.basePath = baseUrl;
-//   faultyBatteryApi.apiClient.defaultHeaders.Authorization = `Bearer ${token}`;
+  // faultyBatteryApi.apiClient.basePath = baseUrl;
+  //   faultyBatteryApi.apiClient.defaultHeaders.Authorization = `Bearer ${token}`;
+  const faultyBatteryObj = new BatteryFaultControllerApi();
+console.log("here", faultyBatteryObj);
+var callback = function(error, data, response) {
+  if (error) {
+    console.error(error);
+  } else {
+    console.log('API called successfully. Returned data: ' + JSON.stringify(data));
+  }
+};
+console.log("get ", faultyBatteryObj.getBatteryFaults({},callback));
 
   return {
-    faultyBatteryApi,
+    // faultyBatteryApi,
   };
 };
