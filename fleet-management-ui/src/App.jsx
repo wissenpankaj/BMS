@@ -11,14 +11,14 @@ import FaultyBatteryList from './components/FaultyBatteries/FaultyBatteryList';
 import { useSdk } from './hooks/useSdk';
 
 function App() {
-  useSdk();
+  
   return (
-    // <div>
-    //   <Layout>
-    //     <AppRoutes />
-    //   </Layout>
-    // </div>
-    <></>
+    <div>
+      <Layout>
+        <AppRoutes />
+      </Layout>
+    </div>
+    
   );
 }
 

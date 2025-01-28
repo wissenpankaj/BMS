@@ -9,6 +9,7 @@ export const useFetchData = (apiCall, dependencies = []) => {
     const fetchData = async () => {
       setLoading(true);
       setError(null);
+
       try {
         const response = await apiCall();
         setData(response);
@@ -24,3 +25,4 @@ export const useFetchData = (apiCall, dependencies = []) => {
 
   return { data, loading, error };
 };
+

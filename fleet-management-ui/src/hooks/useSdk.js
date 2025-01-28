@@ -1,8 +1,8 @@
 
-// import FaultBatterySdk from '../sdk/faultyBattery/src/index'
+
 import BatteryFaultControllerApi from "../sdk/faultyBattery/src/api/BatteryFaultControllerApi";
 
-// const faultyBatteryApi = new FaultyBatterySdk.BatteryFaultControllerApi();
+
 
 
 export const useSdk = (baseUrl, token) => {
