@@ -6,11 +6,10 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import com.google.gson.Gson;
 
+import java.lang.reflect.Array;
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.Random;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 public class TelemetryPublisher {
 
@@ -64,12 +63,16 @@ public class TelemetryPublisher {
     }
 
     // Generate random telemetry data
+
     private static TelemetryData generateTelemetryData() {
+
+        List<String> vehicleIds = Arrays.asList("user123","user456","user789");
         Random random = new Random();
         TelemetryData data = new TelemetryData();
+        int index = random.nextInt(2);
 
-        data.setBatteryId("BATTERY-" + random.nextInt(100));
-        data.setVehicleId("VEHICLE-" + random.nextInt(1000));
+        data.setBatteryId("BATTERY-" + index);
+        data.setVehicleId(vehicleIds.get(index));
         data.setVoltage(3.0 + random.nextDouble() * 5); // Voltage (3.0V - 3.5V)
         data.setCurrent(random.nextDouble() * 100); // Current (0 - 100A)
         data.setSoc(random.nextDouble() * 100); // SOC (0-100%)

@@ -1,12 +1,10 @@
 package com.wissen.bms.reportingAPI.service;
 
+import com.wissen.bms.reportingAPI.model.BatteryFaultModel;
+import com.wissen.bms.reportingAPI.model.FaultLogModel;
+
 import java.util.List;
 
-import org.springframework.stereotype.Service;
-
-import com.wissen.bms.common.model.BatteryFault;
-
-@Service
 public interface BatteryFaultService {
-	List<BatteryFault> getAllBatteries();
+    public List<BatteryFaultModel> getBatteryFaults(String faultId, String gps, String vehicleId, String batteryId, String faultReason, String recommendation, String level, String risk, String time);
 }

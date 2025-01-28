@@ -34,6 +34,8 @@
         <module>InfluxDBRepository</module>
         <module>Common</module>
         <module>EvClient/JavaEvClient</module>
+        <module>PushNotification</module>
+        <module>BatteryInventory</module>
 
     </modules>
 
