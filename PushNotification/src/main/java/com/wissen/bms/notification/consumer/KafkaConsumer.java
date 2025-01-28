@@ -1,9 +1,10 @@
 package com.wissen.bms.notification.consumer;
 
 import java.util.Optional;
-import java.util.Random;
 
 import com.wissen.bms.common.model.BatteryFault;
+import com.wissen.bms.common.model.StationInfoDTO;
+import com.wissen.bms.common.model.VehicleInfo;
 import com.wissen.bms.notification.service.NotificationService;
 import com.wissen.bms.notification.factory.NotificationServiceFactory;
 import com.wissen.bms.notification.repository.UserSubscriptionRepository;
@@ -15,62 +16,52 @@ import org.springframework.stereotype.Service;
 
 import com.wissen.bms.notification.entity.UserSubscription;
 
-//import io.reactivex.rxjava3.internal.subscriptions.SubscriptionHelper;
-
-
 @Service
-
 @EnableKafka
 public class KafkaConsumer {
+
 	@Autowired
 	private NotificationServiceFactory notificationServiceFactory;
 
 	@Autowired
 	private UserSubscriptionRepository userSubscriptionRepository;
-	
-	
-	// Define the Kafka topic name
-	private static final String TOPIC_NAME = "faultalert";
 
-	@KafkaListener(topics = TOPIC_NAME, groupId = "vehicle-group")
-	public void listen(BatteryFault vehicleData) { // Check if the fault reason is not empty or null
-		if (vehicleData.getFaultReason() != null && !vehicleData.getFaultReason().isEmpty()) { // Prepare the email
-																								// content
-			System.out.println("fault data : "+vehicleData);
-			String subject = "Fault Alert for Vehicle " + vehicleData.getVehicleId();
+	// Define Kafka topic names
+	private static final String FAULT_ALERT_TOPIC = "faultalert";
+	private static final String NEAR_STATION_TOPIC = "nearstation";
 
-			String body = "Fault Reason: " + vehicleData.getFaultReason() + "\nRisk Level: " + vehicleData.getRisk()
-					+ "\nRecommendation: " + vehicleData.getRecommendation() + "\nTimestamp: "
-					+ vehicleData.getTime();
+	// Listener for Fault Alert Topic
+	@KafkaListener(topics = FAULT_ALERT_TOPIC, groupId = "vehicle-group")
+	public void listenFaultAlert(BatteryFault batteryFault) {
+		handleMessage(batteryFault);
+	}
 
-			String recipientEmail = "abcd@gmail.com";    // Replace with actual emailaddress
-            
-			UserSubscription usersubscription=new UserSubscription();
-			
-			usersubscription.setVehicleId(vehicleData.getVehicleId());
-			usersubscription.setEmail_Id(recipientEmail);
-			usersubscription.setToken("abcdef");
-			
-			String[] notificationTypes = {"EMAIL", "IOS_PUSH", "ANDROID_PUSH"};
-			Random random = new Random();
-			String randomNotificationType = notificationTypes[random.nextInt(notificationTypes.length)];
-			usersubscription.setNotificationType(randomNotificationType);
-			
-			
-			
-			userSubscriptionRepository.save(usersubscription);
-			
-			// Send email
-			//emailService.sendEmail(recipientEmail, subject, body);
+	// Listener for Other Topic
+	@KafkaListener(topics = NEAR_STATION_TOPIC, groupId = "vehicle-group")
+	public void listenNearByStation(StationInfoDTO stationInfo) {
+		handleMessage(stationInfo);
+	}
 
-			//Dynamic decision to send notification based on subscription
-		Optional<UserSubscription> subscription = userSubscriptionRepository.findById(vehicleData.getVehicleId());//Call to DB
+	// Generic method to process messages
+	private void handleMessage(VehicleInfo vehicleInfo) {
+		try {
+			String vehicleId = vehicleInfo.getVehicleId();
+			if (vehicleId == null || vehicleId.isEmpty()) {
+				throw new IllegalArgumentException("Vehicle ID is missing in the message");
+			}
 
-			System.out.println("subscription data : "+subscription);
-            // Get the appropriate notification service and send the notification
-            NotificationService notificationService =
-                    notificationServiceFactory.getNotificationService(subscription.get().getNotificationType());
-            notificationService.sendNotification(vehicleData, subscription);
+			System.out.println("Received data for vehicleId: " + vehicleId + ", message: " + vehicleInfo);
+
+			// Fetch all subscriptions for the vehicleId
+			Iterable<UserSubscription> subscriptions = userSubscriptionRepository.findAllByVehicleId(vehicleId);
+			for (UserSubscription subscription : subscriptions) {
+				NotificationService notificationService =
+						notificationServiceFactory.getNotificationService(subscription.getNotificationType());
+				notificationService.sendNotification(vehicleInfo, Optional.of(subscription));
+			}
+		} catch (Exception e) {
+			System.err.println("Error processing message: " + e.getMessage());
+			// Log error or send to a Dead Letter Queue (DLQ)
 		}
 	}
 }
