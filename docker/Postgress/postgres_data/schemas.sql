@@ -5,6 +5,7 @@ CREATE TABLE station (
     location VARCHAR(255) NOT NULL
 );
 
+
 -- Table for location
 CREATE TABLE location (
     location_id VARCHAR(50) PRIMARY KEY,
@@ -12,8 +13,18 @@ CREATE TABLE location (
     address VARCHAR(255) NOT NULL
 );
 
-
-
+-- Table for battery
+CREATE TABLE battery (
+    battery_id VARCHAR(50) PRIMARY KEY,
+    type VARCHAR(50) NOT NULL,
+    brand VARCHAR(50),
+    capacity INT, -- in watt-hours or any other unit
+    location_id VARCHAR(50),
+    expiry_date DATE,
+    price INT,
+    status VARCHAR(50) NOT NULL,
+    FOREIGN KEY (location_id) REFERENCES station(station_id)
+);
 
 -- Table for vehicle
 CREATE TABLE vehicle (
@@ -166,6 +177,8 @@ CREATE TABLE user_token (
     expiry TIMESTAMP NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
+
+
 
 -- Insert into location
 INSERT INTO location (location_id, location_name, address) VALUES

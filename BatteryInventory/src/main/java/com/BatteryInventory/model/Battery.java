@@ -1,10 +1,6 @@
 package com.BatteryInventory.model;
 
-
-
 import jakarta.persistence.*;
-
-
 
 @Entity
 @Table(name = "battery")
@@ -12,20 +8,26 @@ public class Battery {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;  // Internal primary key
+    private Long id;
 
     @Column(unique = true)
     private String batteryId;
 
-    private String type;          // e.g. "Li-Ion 12V"
+    private String type;
     private String serialNumber;
-    private String status;        // e.g. "faulty", "active", "allocated", ...
+    private String status; // e.g., "available", "allocated", "faulty"
 
-    // In this design, Battery might be "stand-alone" or
-    // it might link to a PurchaseOrder if allocated.
+    // Association to PurchaseOrder
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "purchase_order_id")
     private PurchaseOrder purchaseOrder;
+
+    // Association to SalesOrder
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sales_order_id")
+    private SalesOrder salesOrder;
+
+    // Getters, setters, and constructors
 
     public Battery() {}
 
@@ -36,7 +38,13 @@ public class Battery {
         this.status = status;
     }
 
-    // Getters/Setters
+    public PurchaseOrder getPurchaseOrder() {
+        return purchaseOrder;
+    }
+
+    public void setPurchaseOrder(PurchaseOrder purchaseOrder) {
+        this.purchaseOrder = purchaseOrder;
+    }
 
     public Long getId() {
         return id;
@@ -45,6 +53,7 @@ public class Battery {
     public String getBatteryId() {
         return batteryId;
     }
+
     public void setBatteryId(String batteryId) {
         this.batteryId = batteryId;
     }
@@ -52,6 +61,7 @@ public class Battery {
     public String getType() {
         return type;
     }
+
     public void setType(String type) {
         this.type = type;
     }
@@ -59,6 +69,7 @@ public class Battery {
     public String getSerialNumber() {
         return serialNumber;
     }
+
     public void setSerialNumber(String serialNumber) {
         this.serialNumber = serialNumber;
     }
@@ -66,15 +77,16 @@ public class Battery {
     public String getStatus() {
         return status;
     }
+
     public void setStatus(String status) {
         this.status = status;
     }
 
-    public PurchaseOrder getPurchaseOrder() {
-        return purchaseOrder;
+    public SalesOrder getSalesOrder() {
+        return salesOrder;
     }
-    public void setPurchaseOrder(PurchaseOrder purchaseOrder) {
-        this.purchaseOrder = purchaseOrder;
+
+    public void setSalesOrder(SalesOrder salesOrder) {
+        this.salesOrder = salesOrder;
     }
 }
-

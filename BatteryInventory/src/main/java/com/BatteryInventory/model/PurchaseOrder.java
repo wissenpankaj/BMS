@@ -2,71 +2,50 @@ package com.BatteryInventory.model;
 
 
 import jakarta.persistence.*;
-
-
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
-@Table(name = "purchase_orders")
+@Table(name = "purchase_order")
 public class PurchaseOrder {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // Internal primary key
+    private Long id;
 
-    @Column(unique = true)
-    private String purchaseOrderId;  // e.g., "po-001"
-
-    private String stationId;
     private String batteryType;
     private int quantity;
-    private String status;    // e.g. "pending", "approved"
+    private String status; // e.g., "pending", "completed"
     private LocalDateTime orderDate;
-    private LocalDateTime expectedDeliveryDate;
 
-    // One purchase order can have many batteries allocated
-    @OneToMany(mappedBy = "purchaseOrder", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<Battery> batteries = new ArrayList<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "supplier_id")
+    private Supplier supplier;
 
-    public PurchaseOrder() {}
+    // Getters, setters, and constructors
 
-    public PurchaseOrder(String purchaseOrderId, String stationId, String batteryType,
-                         int quantity, String status, LocalDateTime orderDate,
-                         LocalDateTime expectedDeliveryDate) {
-        this.purchaseOrderId = purchaseOrderId;
-        this.stationId = stationId;
+    public PurchaseOrder() {
+    }
+
+    public PurchaseOrder(String batteryType, int quantity, String status, LocalDateTime orderDate, Supplier supplier) {
         this.batteryType = batteryType;
         this.quantity = quantity;
         this.status = status;
         this.orderDate = orderDate;
-        this.expectedDeliveryDate = expectedDeliveryDate;
+        this.supplier = supplier;
     }
-
-    // Getters/Setters
 
     public Long getId() {
         return id;
     }
 
-    public String getPurchaseOrderId() {
-        return purchaseOrderId;
-    }
-    public void setPurchaseOrderId(String purchaseOrderId) {
-        this.purchaseOrderId = purchaseOrderId;
-    }
-
-    public String getStationId() {
-        return stationId;
-    }
-    public void setStationId(String stationId) {
-        this.stationId = stationId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getBatteryType() {
         return batteryType;
     }
+
     public void setBatteryType(String batteryType) {
         this.batteryType = batteryType;
     }
@@ -74,6 +53,7 @@ public class PurchaseOrder {
     public int getQuantity() {
         return quantity;
     }
+
     public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
@@ -81,6 +61,7 @@ public class PurchaseOrder {
     public String getStatus() {
         return status;
     }
+
     public void setStatus(String status) {
         this.status = status;
     }
@@ -88,21 +69,17 @@ public class PurchaseOrder {
     public LocalDateTime getOrderDate() {
         return orderDate;
     }
+
     public void setOrderDate(LocalDateTime orderDate) {
         this.orderDate = orderDate;
     }
 
-    public LocalDateTime getExpectedDeliveryDate() {
-        return expectedDeliveryDate;
-    }
-    public void setExpectedDeliveryDate(LocalDateTime expectedDeliveryDate) {
-        this.expectedDeliveryDate = expectedDeliveryDate;
+    public Supplier getSupplier() {
+        return supplier;
     }
 
-    public List<Battery> getBatteries() {
-        return batteries;
-    }
-    public void setBatteries(List<Battery> batteries) {
-        this.batteries = batteries;
+    public void setSupplier(Supplier supplier) {
+        this.supplier = supplier;
     }
 }
+
