@@ -39,6 +39,7 @@
         <module>vehicleManagementApi</module>
         <module>StationManagement</module>
         <module>BMSWeb</module>
+        <module>stream-processing</module>
     </modules>
     <profiles>
         <profile>

@@ -98,7 +98,7 @@ services:
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: Postgres2025
     ports:
-      - "8081:8080"
+      - "8084:8080"
     networks:
       - my_network
   reporting-api:
@@ -140,6 +140,53 @@ services:
         - postgres
     networks:
       - my_network
+  jobmanager:
+    image: flink:java17
+    container_name: flink_jobmanager
+    depends_on:
+      - mqtt-broker
+      - kafka-broker-1
+      - create-topics
+    hostname: jobmanager
+    ports:
+      - "8081:8081" # Flink Web UI
+    volumes:
+      - ../stream-processing/target/stream-processing-1.0.0.jar:/opt/flink/usrlib/stream-processing-1.0.0.jar
+    environment:
+      - JOB_MANAGER_RPC_ADDRESS=jobmanager
+    command: jobmanager
+    networks:
+      my_network:
+
+  taskmanager:
+    image: flink:java17
+    container_name: flink_taskmanager
+    depends_on:
+      - jobmanager
+      - mqtt-broker
+      - kafka-broker-1
+      - create-topics
+    hostname: taskmanager
+    environment:
+      - JOB_MANAGER_RPC_ADDRESS=jobmanager
+    volumes:
+      - ../stream-processing/target/stream-processing-1.0.0.jar:/opt/flink/usrlib/stream-processing-1.0.0.jar
+    command: taskmanager
+    networks:
+      my_network:
+  telemetry-publisher:
+    image: telemetry-publisher:latest
+    build:
+      context: ..\EvClient\JavaEvClient
+      dockerfile: Dockerfile
+    depends_on:
+      - mqtt-broker
+    environment:
+      MQTT_BROKER_URL: tcp://mqtt-broker:1883
+    networks:
+      - my_network
+
+
 
 volumes:
     postgres_data:
