@@ -26,13 +26,15 @@ public class SOCDeviationRule implements Rule {
 	public void execute(Facts facts) throws Exception {
 		String riskReason = "Warning: SOC is out of bounds for battery ";
 		ruleContext.setSocRisk(0.1); //Medium risk for out of bounds SOC
-		if(ruleContext.getRiskReason().equals(null) || ruleContext.getRiskReason().equals("")) {
-			ruleContext.setRiskReason(riskReason);
-		} 
-		else {
-			String prevRiskReason = ruleContext.getRiskReason();
-			ruleContext.setRiskReason(prevRiskReason+""+riskReason+" | ");
-		};
+        ruleContext.getRiskReason().add(riskReason);
+
+//		if(ruleContext.getRiskReason().equals(null) || ruleContext.getRiskReason().equals("")) {
+//			ruleContext.setRiskReason(riskReason);
+//		}
+//		else {
+//			String prevRiskReason = ruleContext.getRiskReason();
+//			ruleContext.setRiskReason(prevRiskReason+""+riskReason+" | ");
+//		};
         System.out.println("Warning: SOC is out of bounds for battery ");
 	}
 

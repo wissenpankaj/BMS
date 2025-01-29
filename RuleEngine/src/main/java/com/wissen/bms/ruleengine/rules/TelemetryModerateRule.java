@@ -26,7 +26,25 @@ public class TelemetryModerateRule implements Rule {
 
     @Override
     public void execute(Facts facts) throws Exception {
-        System.out.println("The battery is faulty.");
+        RuleContext ruleContext = facts.get("ruleContext");
+
+        Double voltage = (Double) facts.get("voltage");
+        Double temperature = (Double) facts.get("temperature");
+        Double internalResistance = (Double) facts.get("internalResistance");
+
+        if (voltage < 360) {
+            ruleContext.addRiskReason("Voltage < 360V");
+        }
+        if (temperature > 55) {
+            ruleContext.addRiskReason("Temperature > 55°C");
+        }
+        if (internalResistance > 0.05) {
+            ruleContext.addRiskReason("Internal Resistance > 0.05Ω");
+        }
+
+        ruleContext.setRiskLevel("Moderate");
+        System.out.println("The battery is moderate risk with reasons: " + String.join(" | ", ruleContext.getRiskReason()));
+
     }
 
 	@Override

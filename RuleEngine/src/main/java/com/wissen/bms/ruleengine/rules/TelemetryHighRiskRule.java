@@ -26,7 +26,25 @@ public class TelemetryHighRiskRule implements Rule {
 
     @Override
     public void execute(Facts facts) throws Exception {
-        System.out.println("The battery is faulty.");
+        RuleContext ruleContext = facts.get("ruleContext");
+
+        Double voltage = (Double) facts.get("voltage");
+        Double temperature = (Double) facts.get("temperature");
+        Double internalResistance = (Double) facts.get("internalResistance");
+
+        if (voltage < 340) {
+            ruleContext.addRiskReason("Voltage < 340V");
+        }
+        if (temperature > 60) {
+            ruleContext.addRiskReason("Temperature > 60°C");
+        }
+        if (internalResistance > 0.06) {
+            ruleContext.addRiskReason("Internal Resistance > 0.06Ω");
+        }
+
+        ruleContext.setRiskLevel("HighRisk");
+        System.out.println("The battery is high risk with reasons: " + String.join(" | ", ruleContext.getRiskReason()));
+
     }
 
 	@Override

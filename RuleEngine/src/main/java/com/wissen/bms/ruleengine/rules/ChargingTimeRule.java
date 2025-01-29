@@ -37,13 +37,14 @@ public class ChargingTimeRule implements Rule {
 	public void execute(Facts facts) throws Exception {
 		String riskReason = "Warning: ChargingTime is deviated for battery ";
 		ruleContext.setChargingTimeRisk(0.1); // Medium risk for out of bounds Charging time
-		if (ruleContext.getRiskReason().equals(null) || ruleContext.getRiskReason().equals("")) {
-			ruleContext.setRiskReason(riskReason);
-		} else {
-			String prevRiskReason = ruleContext.getRiskReason();
-			ruleContext.setRiskReason(prevRiskReason + "" + riskReason + " | ");
-		}
-		;
+		ruleContext.getRiskReason().add(riskReason);
+//
+//		if (ruleContext.getRiskReason().equals(null) || ruleContext.getRiskReason().equals("")) {
+//			ruleContext.getRiskReason().add(riskReason);
+//		} else {
+//			String prevRiskReason = ruleContext.getRiskReason();
+//			ruleContext.setRiskReason(prevRiskReason + "" + riskReason + " | ");
+//		}
 		System.out.println("Warning: ChargingTime is deviated for battery ");
 	}
 

@@ -1,5 +1,8 @@
 package com.wissen.bms.ruleengine.rules;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class RuleContext {
 
 	private String vehicleId = "";
@@ -12,8 +15,9 @@ public class RuleContext {
     private double sohRisk = 0.0;
     private double temperatureRisk = 0.0; 
     private double voltageRisk = 0.0;
-    private String riskLevel = "Low";  // Default risk level
-    private String riskReason = "";
+    private String riskLevel = "";  // Default risk level
+//    private String riskReason = "";
+	private List<String> riskReason = new ArrayList<>();
     
     public String getVehicleId() {                                             
 		return vehicleId;
@@ -71,13 +75,14 @@ public class RuleContext {
 		this.batterId = batterId;
 	}
 
-	public String getRiskReason() {
+	public List<String> getRiskReason() {
 		return riskReason;
 	}
 
-	public void setRiskReason(String riskReason) {
+	public void setRiskReason(List<String> riskReason) {
 		this.riskReason = riskReason;
 	}
+	public void addRiskReason(String reason) { this.riskReason.add(reason); }
 
 	// Getters and setters
     public double getVoltageRisk() {

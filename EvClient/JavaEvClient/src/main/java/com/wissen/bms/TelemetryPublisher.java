@@ -73,11 +73,12 @@ public class TelemetryPublisher {
 
         data.setBatteryId("BATTERY-" + index);
         data.setVehicleId(vehicleIds.get(index));
-        data.setVoltage(3.0 + random.nextDouble() * 5); // Voltage (3.0V - 3.5V)
+        data.setVoltage(310.0 + random.nextInt(60));  // Voltage between 310 and 370 (310 + [0-60])
+        data.setTemperature(50.0 + random.nextDouble() * 18);  // Temperature between 50 and 68 (50 + [0-18])
+        data.setInternalResistance(0.04 + random.nextDouble() * 0.04);  // Internal resistance between 0.4 and 0.8 (0.4 + [0-0.4])
         data.setCurrent(random.nextDouble() * 100); // Current (0 - 100A)
         data.setSoc(random.nextDouble() * 100); // SOC (0-100%)
         data.setSoh(random.nextDouble() * 100); // SOH (0-100%)
-        data.setTemperature(20.0 + random.nextDouble() * 10); // Temperature (20°C - 30°C)
         data.setEnergyThroughput(random.nextDouble() * 500); // Energy throughput (0-500Wh)
         data.setChargingTime(random.nextDouble() * 120); // Charging time (0-120 minutes)
         data.setCycleCount(random.nextInt(500)); // Charge cycles

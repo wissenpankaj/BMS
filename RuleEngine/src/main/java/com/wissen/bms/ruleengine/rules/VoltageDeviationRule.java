@@ -6,8 +6,6 @@ import com.wissen.bms.common.model.TelemetryData;
 import org.jeasy.rules.api.Facts;
 import org.jeasy.rules.api.Rule;
 
-
-
 public class VoltageDeviationRule implements Rule {
 
 	private List<TelemetryData> previousData;
@@ -33,14 +31,15 @@ public class VoltageDeviationRule implements Rule {
 	public void execute(Facts facts) throws Exception {
 		String riskReason = "Warning: Voltage dropped significantly for battery ";
 		ruleContext.setVoltageRisk(0.1); // High risk for out of bounds SOC
-		if(ruleContext.getRiskReason().equals(null) || ruleContext.getRiskReason().equals("")) {
-			ruleContext.setRiskReason(riskReason);
-		} 
-		else {
-			String prevRiskReason = ruleContext.getRiskReason();
-			ruleContext.setRiskReason(prevRiskReason+""+riskReason+" | ");
-		}
-		System.out.println("Warning: Voltage dropped significantly for battery ");
+//		if(ruleContext.getRiskReason().equals(null) || ruleContext.getRiskReason().equals("")) {
+//			ruleContext.setRiskReason(riskReason);
+//		}
+//		else {
+//			String prevRiskReason = ruleContext.getRiskReason();
+//			ruleContext.setRiskReason(prevRiskReason+""+riskReason+" | ");
+//		}
+        ruleContext.getRiskReason().add(riskReason);
+        System.out.println("Warning: Voltage dropped significantly for battery ");
 	}
 
 	@Override
