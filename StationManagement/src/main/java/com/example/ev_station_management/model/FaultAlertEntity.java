@@ -1,6 +1,8 @@
 package com.example.ev_station_management.model;
 
 import jakarta.persistence.*;
+import org.springframework.context.annotation.Bean;
+
 import java.time.LocalDateTime;
 
 @Entity

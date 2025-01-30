@@ -14,6 +14,9 @@ public class FaultAlertProcessor {
     @Autowired
     private NotificationService notificationService;
 
+    @Autowired
+    private StationNotificationService stationNotificationService;
+
     public void processFaultAlert(FaultAlertEntity faultAlertEntity) {
         System.out.println("Processing Fault Alert: " + faultAlertEntity);
 
@@ -50,21 +53,24 @@ public class FaultAlertProcessor {
 
             if (nearestStation.getAvailableStock() > 0) {
                 // Sufficient stock available
-                System.out.println("Station has sufficient stock. Recommending to driver.");
+                System.out.println("Nearest station which has stock. Recommending to driver.");
                 notifyDriver(faultAlertEntity.getVehicleId(), nearestStation);
+//                stationService.handleSwapRequest(nearestStation.getStationId());
+
+
             } else {
-                // Insufficient stock, find next nearest station
-                System.out.println("Station does not have sufficient stock. Finding next nearest station...");
-                Station nextNearestStation = stationService.findNextNearestStation(gps);
-                if (nextNearestStation != null) {
-                    System.out.println("Next Nearest Station: " + nextNearestStation.getName() +
-                            ", Stock: " + nextNearestStation.getAvailableStock());
-                    notifyDriver(faultAlertEntity.getVehicleId(), nextNearestStation);
-                } else {
-                    System.out.println("No alternative stations with sufficient stock found. Triggering replenishment.");
-                    stationService.triggerReplenishment(nearestStation);
-                    notifyDriverOfDelay(faultAlertEntity.getVehicleId(), nearestStation);
-                }
+//                // Insufficient stock, find next nearest station
+//                System.out.println("Station does not have sufficient stock. Finding next nearest station...");
+//                Station nextNearestStation = stationService.findNextNearestStation(gps);
+//                if (nextNearestStation != null) {
+//                    System.out.println("Next Nearest Station: " + nextNearestStation.getName() +
+//                            ", Stock: " + nextNearestStation.getAvailableStock());
+//                    notifyDriver(faultAlertEntity.getVehicleId(), nextNearestStation);
+//                } else {
+//                    System.out.println("No alternative stations with sufficient stock found. Triggering replenishment.");
+//                    stationService.triggerReplenishment(nearestStation);
+//                    notifyDriverOfDelay(faultAlertEntity.getVehicleId(), nearestStation);
+//                }
             }
         } else {
             System.out.println("No station found for the given GPS coordinates.");
@@ -80,7 +86,7 @@ public class FaultAlertProcessor {
         String message = "Nearest station for swap: " + station.getName() +
                 " (Stock: " + station.getAvailableStock() + "). Location: " +
                 station.getLatitude() + ", " + station.getLongitude();
-        notificationService.notifyDriver(vehicleId, message);
+        stationNotificationService.notifyDriver(vehicleId, station);
     }
 
     private void notifyDriverOfDelay(String vehicleId, Station station) {

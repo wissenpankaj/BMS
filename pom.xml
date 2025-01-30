@@ -36,6 +36,7 @@
         <module>Common</module>
         <module>EvClient/JavaEvClient</module>
         <module>PushNotification</module>
+        <module>BatteryInventory</module>
         <module>vehicleManagementApi</module>
         <module>StationManagement</module>
         <module>BMSWeb</module>
