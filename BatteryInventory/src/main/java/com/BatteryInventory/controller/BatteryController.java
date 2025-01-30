@@ -1,19 +1,20 @@
 package com.BatteryInventory.controller;
 
-import com.BatteryInventory.DTO.FaultyBatteryRequest;
-import com.BatteryInventory.DTO.SalesOrderResponse;
+import com.BatteryInventory.dto.FaultyBatteryRequest;
+import com.BatteryInventory.dto.SalesOrderResponse;
 import com.BatteryInventory.service.BatteryService;
 import com.BatteryInventory.service.SalesOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 /**
  * Handles battery-related endpoints:
- *  - POST /api/v1/batteries/faulty
- *  - GET  /api/v1/batteries/availability
+ * - POST /api/v1/batteries/faulty
+ * - GET  /api/v1/batteries/availability
  */
 @RestController
 @RequestMapping("/api/v1/batteries")
@@ -28,18 +29,18 @@ public class BatteryController {
     private BatteryService batteryService;
 
     @PostMapping("/faulty")
-    public SalesOrderResponse handleFaultyBatteries(@RequestBody FaultyBatteryRequest request) {
-        return salesOrderService.processFaultyBatteries(request);
+    public ResponseEntity<SalesOrderResponse> handleFaultyBatteries(@RequestBody FaultyBatteryRequest request) {
+        return ResponseEntity.ok(salesOrderService.processFaultyBatteries(request));
     }
 
-     /**
-      *  GET /api/v1/batteries/availability
-      * Returns aggregated availability info
+    /**
+     * GET /api/v1/batteries/availability
+     * Returns aggregated availability info
      **/
 
     @GetMapping("/availability")
-    public List<String> getAvailableBatteries(@RequestParam String batteryType) {
-        return batteryService.getAvailableBatteryIds(batteryType);
+    public ResponseEntity<List<String>> getAvailableBatteries(@RequestParam String batteryType) {
+        return ResponseEntity.ok(batteryService.getAvailableBatteryIds(batteryType));
     }
 }
 

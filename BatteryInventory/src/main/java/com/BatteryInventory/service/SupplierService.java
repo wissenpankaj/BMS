@@ -1,6 +1,6 @@
 package com.BatteryInventory.service;
 
-import com.BatteryInventory.DTO.SupplierFulfillmentRequest;
+import com.BatteryInventory.dto.SupplierFulfillmentRequest;
 import com.BatteryInventory.model.Battery;
 import com.BatteryInventory.model.PurchaseOrder;
 import com.BatteryInventory.model.Supplier;

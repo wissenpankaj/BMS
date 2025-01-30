@@ -1,6 +1,6 @@
 package com.BatteryInventory.service;
 
-import com.BatteryInventory.DTO.*;
+import com.BatteryInventory.dto.*;
 import com.BatteryInventory.model.Battery;
 import com.BatteryInventory.model.PurchaseOrder;
 import com.BatteryInventory.model.SalesOrder;
@@ -33,7 +33,7 @@ public class SalesOrderService {
     @Autowired
     private SalesOrderStatusService salesOrderStatusService;
 
-     /*
+    /*
      * Process the faulty batteries and check availability in inventory.
      * If batteries are available, a sales order is placed
      * If batteries are not available, a purchase order is placed.
@@ -84,6 +84,7 @@ public class SalesOrderService {
 
         salesOrder.setTotalQuantity(totalRequested);
         SalesOrder savedSalesOrder = salesOrderRepository.save(salesOrder);
+
 
         return new SalesOrderResponse(
                 savedSalesOrder.getId(),

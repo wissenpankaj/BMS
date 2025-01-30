@@ -1,11 +1,12 @@
 package com.BatteryInventory.controller;
 
-import com.BatteryInventory.DTO.SupplierFulfillmentRequest;
+import com.BatteryInventory.dto.SupplierFulfillmentRequest;
 import com.BatteryInventory.model.PurchaseOrder;
 import com.BatteryInventory.service.PurchaseOrderService;
 import com.BatteryInventory.service.SupplierService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,8 +27,8 @@ public class SupplierController {
      * Fetches all pending purchase orders.
      */
     @GetMapping("/pending-purchase-orders")
-    public List<PurchaseOrder> getPendingPurchaseOrders() {
-        return purchaseOrderService.getPendingPurchaseOrders();
+    public ResponseEntity<List<PurchaseOrder>> getPendingPurchaseOrders() {
+        return ResponseEntity.ok(purchaseOrderService.getPendingPurchaseOrders());
     }
 
     @PostMapping("/fulfill-order")
