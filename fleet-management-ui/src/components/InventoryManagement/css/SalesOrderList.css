@@ -1,0 +1,97 @@
+.sales-order-container {
+    padding: 20px;
+  }
+  
+  .sales-order-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .sales-order-table th,
+  .sales-order-table td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: center;
+  }
+  
+  .sales-order-table th {
+    background-color: var(--primary-color);
+    color: white;
+  }
+  
+  .status {
+    font-weight: bold;
+    text-transform: capitalize;
+  }
+  
+  .status.pending {
+    color: orange;
+  }
+  
+  .status.approved {
+    color: green;
+  }
+  
+  .status.rejected {
+    color: red;
+  }
+  
+  .status.completed {
+    color: blue;
+  }
+  
+  /* Action Button */
+  .action-button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 14px;
+  }
+  
+  .dropdown {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .dropdown-menu {
+    position: absolute;
+    background-color: white;
+    border: 1px solid #ddd;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+    list-style: none;
+    padding: 0;
+    margin: 5px 0;
+    width: 100px;
+    z-index: 10;
+  }
+  
+  .dropdown-menu li {
+    padding: 8px;
+    cursor: pointer;
+    text-align: center;
+  }
+  
+  .dropdown-menu li:hover {
+    background-color: var(--primary-color);
+    color: white;
+  }
+  
+  /* Place Order Button */
+  .place-order-button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 14px;
+  }
+  
+  .place-order-button.disabled {
+    background-color: gray;
+    cursor: not-allowed;
+  }
+  

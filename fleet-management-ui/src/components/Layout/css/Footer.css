@@ -1,0 +1,12 @@
+.footer {
+    background-color: var(--footer-bg-color);
+    color: white;
+    padding: var(--padding);
+    text-align: center;
+    font-size: 14px;
+  }
+  
+  .footer p {
+    margin: 0;
+  }
+  
