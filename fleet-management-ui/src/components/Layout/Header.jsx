@@ -1,21 +1,27 @@
-import React from 'react';
-import './css/Header.css';
+import React, { useState } from 'react';
+import './css/Header.css';  // Import CSS file
 
 const Header = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
   return (
     <header className="header">
-      <div className="logo">
-        <h1>Fleet Management</h1>
+      {/* Logo and Down Arrow */}
+      <div className="user-info" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+        <img src="/path-to-your-logo.png" alt="User Logo" className="user-logo" />
+        <span className="down-arrow">▼</span>
       </div>
-      <nav>
-        <ul>
-        <li><a href="/dashboard">Dashboard</a></li>
-        <li><a href="/faulty-batteries">Faulty Batteries</a></li>
-        <li><a href="/reports">Reports</a></li>
-        <li><a href="/settings">Settings</a></li>
-        <li><a href="/maintenance-logs">Maintenance Logs</a></li>
-        </ul>
-      </nav>
+
+      {/* Profile/Logout Dropdown */}
+      {isMenuOpen && (
+        <div className="dropdown-menu">
+          <ul>
+            <li><a href="/profile">Profile</a></li>
+            <li><a href="/logout">Logout</a></li>
+            <li><a href="/signin">Sign In</a></li>
+          </ul>
+        </div>
+      )}
     </header>
   );
 };

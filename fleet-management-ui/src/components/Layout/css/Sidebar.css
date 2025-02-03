@@ -1,36 +1,77 @@
+/* Sidebar Styling */
 .sidebar {
-    background-color: var(--sidebar-bg-color);
-    color: white;
-    width: 250px;
-    padding: var(--padding);
-    height: 100%;
-    position: fixed;
-    top: 0;
-    left: 0;
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .sidebar ul {
-    list-style: none;
-    padding: 0;
-  }
-  
-  .sidebar ul li {
-    margin: 20px 0;
-  }
-  
-  .sidebar ul li a {
-    color: white;
-    font-size: 16px;
-    font-weight: 500;
-    text-transform: uppercase;
-    display: block;
-    padding: 10px;
-    border-radius: var(--border-radius);
-  }
-  
-  .sidebar ul li a:hover {
-    background-color: var(--primary-color);
-  }
-  
+  background-color: var(--sidebar-bg-color);
+  color: white;
+  width: 250px;
+  padding: var(--padding);
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-header {
+  margin-bottom: 20px;
+  padding: 10px;
+  background-color: var(--sidebar-bg-color);
+}
+
+.sidebar-header h2 {
+  font-size: 20px;
+  font-weight: bold;
+  margin: 0;
+}
+
+.sidebar ul {
+  list-style: none;
+  /* padding: 0; */
+}
+
+.sidebar ul li {
+  margin: 10px 0;
+}
+
+.sidebar ul li a, .menu-toggle {
+  color: white;
+  /* font-size: 14px;  Decreased font size for main menu */
+  font-weight: 500;
+  text-transform: uppercase;
+  display: block;
+  padding: 10px;
+  border-radius: var(--border-radius);
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+}
+
+.sidebar ul li a:hover, .menu-toggle:hover {
+  background-color: var(--primary-color);
+}
+
+/* Styling for Submenu */
+.submenu {
+  list-style: none;
+  padding-left: 20px;
+  background-color: var(--sidebar-bg-color);  /* same as the main menu */
+  /* border-left: 3px solid var(--primary-color); */
+  margin-top: 10px;
+}
+
+.submenu li {
+  margin: 5px 0;
+}
+
+.submenu li a {
+  font-size: 12px;   /* Smaller font size for submenu */
+  font-weight: normal;  /* Less bold font for submenu */
+  padding: 8px;         /* Smaller padding */
+  text-transform: none; /* No text-transform for submenu */
+}
+
+.submenu li a:hover {
+  background-color: var(--primary-color);  /* Same hover color as main menu */
+}
