@@ -1,0 +1,88 @@
+
+.vehicle-list {
+    padding: 20px;
+    text-align: center;
+}
+
+.vehicle-list h2 {
+    margin-bottom: 15px;
+    font-size: 24px;
+    color: #333;
+}
+
+.vehicle-list table {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    border-collapse: collapse;
+    border: 1px solid #ddd;
+}
+
+.vehicle-list th, .vehicle-list td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+.vehicle-list th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+}
+
+.vehicle-list tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.vehicle-list tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* 
+.vehicle-list {
+    padding: 20px;
+    text-align: center;
+    font-family: 'Roboto', sans-serif;
+    background-color: #f4f4f9;
+    color: #333;
+}
+
+.vehicle-list h2 {
+    margin-bottom: 15px;
+    font-size: 24px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+}
+
+.vehicle-list table {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    border-collapse: collapse;
+    border: 1px solid #ddd;
+    background-color: white;
+    color: #333;
+}
+
+.vehicle-list th, .vehicle-list td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: left;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.vehicle-list th {
+    background-color: #3498db;
+    color: white;
+    text-transform: uppercase;
+}
+
+.vehicle-list tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.vehicle-list tr:hover {
+    background-color: #2980b9;
+    color: white;
+}
+ */

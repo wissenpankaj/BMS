@@ -1,0 +1,23 @@
+/* Ensure proper spacing and alignment for the dropdown */
+.dropdown-menu {
+    min-width: 250px; /* Adjust width for notification content */
+    max-height: 300px; /* Add scroll for overflow */
+    overflow-y: auto; /* Enable scroll for large content */
+}
+
+.dropdown-item {
+    white-space: normal; /* Allow text wrapping */
+    font-size: 0.9rem; /* Adjust text size */
+}
+
+.badge {
+    font-size: 0.75rem; /* Smaller badge size */
+    padding: 0.4em 0.6em;
+    margin-top: 5px;
+}
+
+/* Set a maximum height and enable scrolling for the modal body */
+.modal-body {
+    max-height: 300px; /* Adjust as needed */
+    overflow-y: auto;  /* Add scroll when content overflows vertically */
+}

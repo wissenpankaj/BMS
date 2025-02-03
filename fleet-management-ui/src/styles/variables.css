@@ -1,0 +1,25 @@
+/* Colors */
+:root {
+    --primary-color: #3498db; /* Blue */
+    --secondary-color: #2ecc71; /* Green */
+    --tertiary-color: #e74c3c; /* Red */
+    --background-color: #f4f4f9; /* Light background */
+    --text-color: #333; /* Dark text */
+    --header-bg-color: #2c3e50; /* Dark header */
+    --sidebar-bg-color: #2c3e50; /* Dark sidebar */
+    --footer-bg-color: #2c3e50; /* Dark footer */
+  }
+  
+  /* Fonts */
+  :root {
+    --font-primary: 'Roboto', sans-serif;
+    --font-secondary: 'Poppins', sans-serif;
+  }
+  
+  /* Spacing */
+  :root {
+    --padding: 20px;
+    --margin: 20px;
+    --border-radius: 5px;
+  }
+  

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "722372148547",
+    "project_id": "ev-battery-fault-detection",
+    "storage_bucket": "ev-battery-fault-detection.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:722372148547:android:8a070c71e54f906a0883f6",
+        "android_client_info": {
+          "package_name": "com.wissen.bms.pushnotification"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB0rCurzWiZCrbQJtOkFzdGvna1ZU9OBcg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
